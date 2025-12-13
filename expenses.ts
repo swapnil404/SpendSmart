@@ -5,11 +5,7 @@ const expensesRoute = new Hono();
 
 expensesRoute.use("*", logger());
 
-type expense = {
-  id: number;
-  title: string;
-  amount: number;
-};
+
 const fakeExpenses: expense[] = [
   { id: 1, title: "Groceries", amount: 52.75 },
   { id: 2, title: "Electricity Bill", amount: 120.0 },
@@ -18,7 +14,14 @@ const fakeExpenses: expense[] = [
   { id: 5, title: "Coffee", amount: 4.5 },
 ];
 
-const createPostSchema = z.object({
+const expenseSchema = z.object({
+  id: z.number().int().positive(),
+  title: z.string().min(1).max(100),
+  amount: z.number().positive(),
+});
+type expense = z.infer<typeof expenseSchema>
+
+const expensePostSchema = z.object({
   title: z.string().min(1).max(100),
   amount: z.number().positive(),
 });
@@ -28,7 +31,7 @@ expensesRoute.get("/", async (c) => {
 });
 expensesRoute.post("/", async (c) => {
   const data = await c.req.json();
-  const expense = createPostSchema.parse(data);
+  const expense = expensePostSchema.parse(data);
   fakeExpenses.push({...expense,id:fakeExpenses.length+1})
   return c.json({ expense });
 });
