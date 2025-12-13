@@ -1,4 +1,4 @@
-# budgetctracker
+# budget tracker
 
 To install dependencies:
 
