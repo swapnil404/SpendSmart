@@ -34,7 +34,7 @@ expensesRoute.get("/", async (c) => {
   return c.json({ expense: fakeExpenses });
 });
 
-expensesRoute.get ("/total-spent", async (c) =>{
+expensesRoute.get ("/totalSpent", async (c) =>{
   const total = fakeExpenses.reduce((sum, expense) => sum + expense.amount, 0);
 return c.json({ total });
 })
