@@ -9,12 +9,12 @@ import {
   IconFileWord,
   IconFolder,
   IconHelp,
-  IconInnerShadowTop,
   IconListDetails,
   IconReport,
   IconSearch,
   IconSettings,
   IconUsers,
+  IconCoin,
 } from "@tabler/icons-react"
 
 import { NavDocuments } from "@/components/nav-documents"
@@ -44,69 +44,69 @@ const data = {
       icon: IconDashboard,
     },
     {
-      title: "Lifecycle",
+      title: "Transactions",
       url: "#",
       icon: IconListDetails,
     },
     {
-      title: "Analytics",
+      title: "Budgets",
       url: "#",
       icon: IconChartBar,
     },
     {
-      title: "Projects",
+      title: "Can I Afford It?",
       url: "#",
       icon: IconFolder,
     },
     {
-      title: "Team",
+      title: "Categories",
       url: "#",
       icon: IconUsers,
     },
   ],
   navClouds: [
     {
-      title: "Capture",
+      title: "Insights",
       icon: IconCamera,
       isActive: true,
       url: "#",
       items: [
         {
-          title: "Active Proposals",
+          title: "Monthly Trends",
           url: "#",
         },
         {
-          title: "Archived",
+          title: "Yearly Overview",
           url: "#",
         },
       ],
     },
     {
-      title: "Proposal",
+      title: "Subscriptions",
       icon: IconFileDescription,
       url: "#",
       items: [
         {
-          title: "Active Proposals",
+          title: "Active",
           url: "#",
         },
         {
-          title: "Archived",
+          title: "Cancelled",
           url: "#",
         },
       ],
     },
     {
-      title: "Prompts",
+      title: "Reports",
       icon: IconFileAi,
       url: "#",
       items: [
         {
-          title: "Active Proposals",
+          title: "Tax Report",
           url: "#",
         },
         {
-          title: "Archived",
+          title: "Export Data",
           url: "#",
         },
       ],
@@ -159,8 +159,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <a href="#">
-                <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+                <IconCoin className="!size-5 text-emerald-600" />
+                <span className="text-base font-semibold">SpendSmart</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
