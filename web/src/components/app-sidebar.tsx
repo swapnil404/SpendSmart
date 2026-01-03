@@ -9,7 +9,6 @@ import {
   IconFileWord,
   IconFolder,
   IconHelp,
-  IconInnerShadowTop,
   IconListDetails,
   IconReport,
   IconSearch,
@@ -45,69 +44,69 @@ const data = {
       icon: IconDashboard,
     },
     {
-      title: "Lifecycle",
+      title: "Transactions",
       url: "#",
       icon: IconListDetails,
     },
     {
-      title: "Analytics",
+      title: "Budgets",
       url: "#",
       icon: IconChartBar,
     },
     {
-      title: "Projects",
+      title: "Can I Afford It?",
       url: "#",
       icon: IconFolder,
     },
     {
-      title: "Team",
+      title: "Categories",
       url: "#",
       icon: IconUsers,
     },
   ],
   navClouds: [
     {
-      title: "Capture",
+      title: "Insights",
       icon: IconCamera,
       isActive: true,
       url: "#",
       items: [
         {
-          title: "Active Proposals",
+          title: "Monthly Trends",
           url: "#",
         },
         {
-          title: "Archived",
+          title: "Yearly Overview",
           url: "#",
         },
       ],
     },
     {
-      title: "Proposal",
+      title: "Subscriptions",
       icon: IconFileDescription,
       url: "#",
       items: [
         {
-          title: "Active Proposals",
+          title: "Active",
           url: "#",
         },
         {
-          title: "Archived",
+          title: "Cancelled",
           url: "#",
         },
       ],
     },
     {
-      title: "Prompts",
+      title: "Reports",
       icon: IconFileAi,
       url: "#",
       items: [
         {
-          title: "Active Proposals",
+          title: "Tax Report",
           url: "#",
         },
         {
-          title: "Archived",
+          title: "Export Data",
           url: "#",
         },
       ],
