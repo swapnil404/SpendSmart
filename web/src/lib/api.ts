@@ -1,4 +1,4 @@
-import { type ApiRoutes } from "../../../server/src/app";
+import { type ApiRoutes } from "../../../server/src/app.ts";
 import { hc } from "hono/client";
 
 const client = hc<ApiRoutes>(import.meta.env.VITE_API_URL || "").replace(

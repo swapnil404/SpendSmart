@@ -4,10 +4,6 @@ import { logger } from "hono/logger";
 
 export const app = new Hono();
 
-Bun.serve({
-  fetch: app.fetch,
-});
-
 app.use("*", logger());
 app.get("/test", (c) => c.text("Hono!"));
 
