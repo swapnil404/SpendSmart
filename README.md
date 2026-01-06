@@ -16,7 +16,6 @@ A modern, full-stack budget tracking application built to help you take control 
 
 ### Backend
 - **Hono** - Ultrafast web framework
-- **Hono RPC** - End-to-end type-safe API calls
 - **Drizzle ORM** - Type-safe database toolkit
 - **PostgreSQL** - Primary database
 - **JWT Authentication** - Secure token-based auth
