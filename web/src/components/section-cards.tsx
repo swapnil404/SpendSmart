@@ -10,15 +10,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useEffect, useState } from "react";
-import {api} from "../lib/api.ts";
 
 export function SectionCards() {
   const [totalSpent, setTotalSpent] = useState(0);
 
   useEffect(() => {
     async function fetchTotal() {
+      const apiUrl = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
       try {
-        const res = await api.expenses["totalSpent"].$get();
+        const res = await fetch(`${apiUrl}/api/expenses/total-spent`);
         if (!res.ok) {
           console.error("Failed to fetch total spent:", res.status);
           return;

@@ -30,5 +30,5 @@
       ]
     }
   },
-  "include": ["src", "../server/src"]
+  "include": ["src"]
 }
