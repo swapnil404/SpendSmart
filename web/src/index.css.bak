@@ -1,0 +1,191 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
+@import "tailwindcss";
+  :root {
+    /* Warm, calm color palette */
+    --background: 40 20% 98%;
+    --foreground: 220 20% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 15%;
+
+    /* Sage green primary */
+    --primary: 152 35% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 40 15% 94%;
+    --secondary-foreground: 220 20% 25%;
+
+    --muted: 40 10% 92%;
+    --muted-foreground: 220 10% 45%;
+
+    --accent: 152 25% 92%;
+    --accent-foreground: 152 35% 30%;
+
+    --destructive: 0 65% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 40 15% 88%;
+    --input: 40 15% 88%;
+    --ring: 152 35% 45%;
+
+    --radius: 0.75rem;
+
+    /* Sidebar */
+    --sidebar-background: 40 15% 96%;
+    --sidebar-foreground: 220 15% 30%;
+    --sidebar-primary: 152 35% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 152 25% 92%;
+    --sidebar-accent-foreground: 152 35% 30%;
+    --sidebar-border: 40 15% 90%;
+    --sidebar-ring: 152 35% 45%;
+
+    /* Custom SpendSmart tokens */
+    --success: 152 50% 45%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --info: 210 80% 55%;
+    --info-foreground: 0 0% 100%;
+
+    /* Category colors */
+    --category-food: 15 85% 55%;
+    --category-transport: 210 75% 50%;
+    --category-shopping: 280 60% 55%;
+    --category-bills: 45 85% 50%;
+    --category-subscriptions: 330 70% 55%;
+    --category-entertainment: 170 65% 45%;
+    --category-health: 0 70% 55%;
+    --category-education: 240 60% 55%;
+    --category-other: 220 15% 55%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(152 35% 45%), hsl(152 40% 55%));
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(40 20% 98%));
+    --gradient-success: linear-gradient(135deg, hsl(152 50% 45%), hsl(152 60% 55%));
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(220 20% 15% / 0.03);
+    --shadow-md: 0 4px 6px -1px hsl(220 20% 15% / 0.05), 0 2px 4px -2px hsl(220 20% 15% / 0.05);
+    --shadow-lg: 0 10px 15px -3px hsl(220 20% 15% / 0.08), 0 4px 6px -4px hsl(220 20% 15% / 0.05);
+    --shadow-card: 0 1px 3px 0 hsl(220 20% 15% / 0.04), 0 1px 2px -1px hsl(220 20% 15% / 0.04);
+  }
+
+  .dark {
+    --background: 220 20% 10%;
+    --foreground: 40 15% 95%;
+
+    --card: 220 18% 13%;
+    --card-foreground: 40 15% 95%;
+
+    --popover: 220 18% 13%;
+    --popover-foreground: 40 15% 95%;
+
+    --primary: 152 40% 50%;
+    --primary-foreground: 220 20% 10%;
+
+    --secondary: 220 15% 18%;
+    --secondary-foreground: 40 15% 90%;
+
+    --muted: 220 15% 20%;
+    --muted-foreground: 40 10% 60%;
+
+    --accent: 152 30% 20%;
+    --accent-foreground: 152 40% 70%;
+
+    --destructive: 0 60% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 15% 20%;
+    --input: 220 15% 20%;
+    --ring: 152 40% 50%;
+
+    --sidebar-background: 220 18% 12%;
+    --sidebar-foreground: 40 10% 80%;
+    --sidebar-primary: 152 40% 50%;
+    --sidebar-primary-foreground: 220 20% 10%;
+    --sidebar-accent: 152 30% 20%;
+    --sidebar-accent-foreground: 152 40% 70%;
+    --sidebar-border: 220 15% 18%;
+    --sidebar-ring: 152 40% 50%;
+
+    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.2);
+    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.3);
+    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.4);
+    --shadow-card: 0 1px 3px 0 hsl(0 0% 0% / 0.2);
+  }
+
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'DM Sans', system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+}
+
+@layer components {
+  .card-hover {
+    @apply transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5;
+  }
+
+  .stat-card {
+    @apply bg-card rounded-xl p-5 shadow-card border border-border/50;
+  }
+
+  .category-badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium;
+  }
+
+  .budget-progress {
+    @apply h-2 rounded-full bg-muted overflow-hidden;
+  }
+
+  .budget-progress-bar {
+    @apply h-full rounded-full transition-all duration-500 ease-out;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.4s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.2s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+}
