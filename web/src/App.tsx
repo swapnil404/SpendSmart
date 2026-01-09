@@ -1,4 +1,4 @@
-import Page from "./app/dashboard/page"
+import Page from "./pages/page"
 
 function App() {
   return (
