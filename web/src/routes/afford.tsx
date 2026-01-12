@@ -15,15 +15,13 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { CheckCircle2, XCircle, AlertCircle, HelpCircle, Wallet } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { createFileRoute } from '@tanstack/react-router';
 
-type AffordabilityResult = {
-  canAfford: boolean;
-  message: string;
-  details: string[];
-  severity: 'success' | 'warning' | 'error';
-};
+export const Route = createFileRoute('/afford')({
+  component: CanIAffordIt,
+})
 
-export default function CanIAffordIt() {
+function CanIAffordIt() {
   const { budget, categories, getRemainingBudget, getCategorySpending, getSubscriptionTotal } = useFinance();
   const [price, setPrice] = useState('');
   const [categoryId, setCategoryId] = useState('');
@@ -225,3 +223,10 @@ export default function CanIAffordIt() {
     </AppLayout>
   );
 }
+
+type AffordabilityResult = {
+  canAfford: boolean;
+  message: string;
+  details: string[];
+  severity: 'success' | 'warning' | 'error';
+};

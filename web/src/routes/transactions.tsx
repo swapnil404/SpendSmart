@@ -12,8 +12,13 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Search } from 'lucide-react';
+import { createFileRoute } from '@tanstack/react-router';
 
-export default function Transactions() {
+export const Route = createFileRoute('/transactions')({
+  component: Transactions,
+})
+
+function Transactions() {
   const { transactions, categories } = useFinance();
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');

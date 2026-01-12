@@ -15,9 +15,13 @@ import {
 } from '@/components/ui/dialog';
 import { Settings as SettingsIcon, Trash2, RotateCcw, Wallet } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { DEFAULT_CATEGORIES, SAMPLE_TRANSACTIONS, DEFAULT_BUDGET } from '@/lib/data';
+import { createFileRoute } from '@tanstack/react-router';
 
-export default function Settings() {
+export const Route = createFileRoute('/settings')({
+  component: Settings,
+})
+
+function Settings() {
   const { budget, updateBudget, transactions, categories } = useFinance();
   const { toast } = useToast();
   const [resetConfirm, setResetConfirm] = useState(false);

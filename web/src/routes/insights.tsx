@@ -6,6 +6,11 @@ import { CategoryIcon } from '@/components/CategoryIcon';
 import { getCategoryBgColor } from '@/components/CategoryBadge';
 import { TrendingUp, TrendingDown, Repeat, PiggyBank, Lightbulb } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { createFileRoute } from '@tanstack/react-router';
+
+export const Route = createFileRoute('/insights')({
+  component: InsightsRoute,
+})
 
 interface InsightCardProps {
   icon: React.ReactNode;
@@ -39,7 +44,7 @@ function InsightCard({ icon, title, description, variant = 'default' }: InsightC
   );
 }
 
-export default function Insights() {
+function InsightsRoute() {
   const { transactions, categories, budget, getMonthlySpending, getCategorySpending, getSubscriptionTotal } = useFinance();
 
   const currentMonth = getCurrentMonth();

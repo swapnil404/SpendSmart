@@ -16,6 +16,11 @@ import {
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { createFileRoute } from '@tanstack/react-router';
+
+export const Route = createFileRoute('/categories')({
+  component: Categories,
+})
 
 const CATEGORY_COLORS = [
   { id: 'category-food', name: 'Orange' },
@@ -29,7 +34,7 @@ const CATEGORY_COLORS = [
   { id: 'category-other', name: 'Gray' },
 ];
 
-export default function Categories() {
+function Categories() {
   const { categories, addCategory, updateCategory, deleteCategory } = useFinance();
   const { toast } = useToast();
   const [isAdding, setIsAdding] = useState(false);

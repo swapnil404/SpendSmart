@@ -5,8 +5,13 @@ import { formatCurrency, formatDate } from '@/lib/data';
 import { CategoryBadge, getCategoryBgColor } from '@/components/CategoryBadge';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { Repeat, AlertTriangle } from 'lucide-react';
+import { createFileRoute } from '@tanstack/react-router';
 
-export default function Subscriptions() {
+export const Route = createFileRoute('/subscriptions')({
+  component: Subscriptions,
+})
+
+function Subscriptions() {
   const { transactions, categories, budget } = useFinance();
 
   const subscriptions = useMemo(() => {
