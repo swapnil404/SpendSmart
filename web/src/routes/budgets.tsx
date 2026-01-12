@@ -17,8 +17,13 @@ import {
 } from '@/components/ui/dialog';
 import { Pencil } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { createFileRoute } from '@tanstack/react-router';
 
-export default function Budgets() {
+export const Route = createFileRoute('/budgets')({
+  component: Budgets,
+})
+
+function Budgets() {
   const { budget, categories, getCategorySpending, getMonthlySpending, updateBudget } = useFinance();
   const { toast } = useToast();
   const [editingTotal, setEditingTotal] = useState(false);

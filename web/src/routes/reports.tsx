@@ -7,8 +7,13 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 
 import { FileText, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { createFileRoute } from '@tanstack/react-router';
 
-export default function Reports() {
+export const Route = createFileRoute('/reports')({
+  component: Reports,
+})
+
+function Reports() {
   const { transactions, categories } = useFinance();
   const { toast } = useToast();
 

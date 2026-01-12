@@ -9,8 +9,12 @@ import { useFinance } from '@/contexts/FinanceContext';
 import { formatCurrency, getCurrentMonth, getMonthName } from '@/lib/data';
 import { Wallet, TrendingUp, Receipt, PiggyBank, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { Link, createFileRoute } from '@tanstack/react-router';
 import { useQuery } from "@tanstack/react-query";
+
+export const Route = createFileRoute('/')({
+  component: Dashboard,
+})
 
 async function fetchTotal() {
   const apiUrl = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
@@ -19,7 +23,7 @@ async function fetchTotal() {
   return res.json();
 }
 
-export default function Dashboard() {
+function Dashboard() {
   const {
     transactions,
     budget,
@@ -104,7 +108,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold text-foreground">Where your money goes</h2>
             </div>
-            <SpendingChart month={currentMonth} />
+            < SpendingChart month={currentMonth} />
           </div>
 
           {/* Budget Overview */}

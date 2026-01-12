@@ -15,6 +15,7 @@ app.get("/", (c) => {
 
 Bun.serve({
   fetch: app.fetch,
+  port: 3001,
 });
 
 app.use("*", logger());
