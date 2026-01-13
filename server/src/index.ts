@@ -4,7 +4,17 @@ import { logger } from "hono/logger";
 import { db } from "./db/db";
 
 
+import { cors } from "hono/cors";
+
 const app = new Hono();
+
+app.use("*", cors());
+app.use("*", logger());
+
+app.onError((err, c) => {
+  console.error(`${err}`);
+  return c.json({ error: "Internal Server Error" }, 500);
+});
 
 const welcomeStrings = [
   `Hello Hono from Bun ${process.versions.bun}!`,
