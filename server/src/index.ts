@@ -1,9 +1,6 @@
 import { Hono } from "hono";
 import { expensesRoute } from "./expenses";
 import { logger } from "hono/logger";
-import { db } from "./db/db";
-
-
 import { cors } from "hono/cors";
 
 const app = new Hono();
@@ -17,19 +14,23 @@ app.use(
       if (origin.endsWith(".swapnilchristian.dev")) return origin;
       return null;
     },
-    allowMethods: ["GET", "POST", "PUT", "DELETE"],
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization"],
     exposeHeaders: ["Content-Length"],
     maxAge: 600,
+    credentials: true,
   })
 );
 
 app.use("*", logger());
 
+
 app.onError((err, c) => {
-  console.error(`${err}`);
-  return c.json({ error: "Internal Server Error" }, 500);
+  console.error("Error occurred:", err.message);
+  console.error("Stack trace:", err.stack);
+  return c.json({ error: "Internal Server Error", message: err.message }, 500);
 });
+
 
 const welcomeStrings = [
   `Hello Hono from Bun ${process.versions.bun}!`,
@@ -40,18 +41,17 @@ app.get("/", (c) => {
   return c.text(welcomeStrings.join("\n\n"));
 });
 
+app.get("/test", (c) => c.text("Hono!"));
+
+app.route("/api/expenses", expensesRoute);
+
+console.log("server running");
+
 if (!process.env.VERCEL) {
   Bun.serve({
     fetch: app.fetch,
     port: 3001,
   });
 }
-
-app.use("*", logger());
-app.get("/test", (c) => c.text("Hono!"));
-
-app.route("/api/expenses", expensesRoute);
-
-console.log("server running");
 
 export default app;
