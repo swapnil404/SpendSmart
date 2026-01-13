@@ -1,7 +1,10 @@
+import "dotenv/config";
 import { drizzle } from "drizzle-orm/neon-http";
 
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL is not set");
+const databaseUrl = process.env.DATABASE_URL;
+
+if (!databaseUrl && process.env.NODE_ENV === "production") {
+  console.warn("DATABASE_URL is not set in production. Database operations will fail.");
 }
 
-export const db = drizzle(process.env.DATABASE_URL);
+export const db = drizzle(databaseUrl!);
