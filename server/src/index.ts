@@ -15,10 +15,12 @@ app.get("/", (c) => {
   return c.text(welcomeStrings.join("\n\n"));
 });
 
-Bun.serve({
-  fetch: app.fetch,
-  port: 3001,
-});
+if (!process.env.VERCEL) {
+  Bun.serve({
+    fetch: app.fetch,
+    port: 3001,
+  });
+}
 
 app.use("*", logger());
 app.get("/test", (c) => c.text("Hono!"));
