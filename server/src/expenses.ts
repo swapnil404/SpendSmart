@@ -8,7 +8,6 @@ import { desc, eq, sql } from "drizzle-orm";
 
 const expensesRoute = new Hono();
 
-expensesRoute.use("*", cors());
 expensesRoute.use("*", logger());
 
 const expensePostSchema = z.object({
