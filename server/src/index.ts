@@ -12,6 +12,7 @@ app.use(
       if (!origin) return "*";
       if (origin.startsWith("http://localhost")) return origin;
       if (origin.endsWith(".swapnilchristian.dev")) return origin;
+      if (origin.endsWith(".vercel.app")) return origin;
       return null;
     },
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
