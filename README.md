@@ -16,7 +16,6 @@ A modern, full-stack budget tracking application built to help you take control 
 
 ### Backend
 - **Hono** - Ultrafast web framework
-- **Hono RPC** - End-to-end type-safe API calls
 - **Drizzle ORM** - Type-safe database toolkit
 - **PostgreSQL** - Primary database
 - **JWT Authentication** - Secure token-based auth
@@ -35,8 +34,8 @@ A modern, full-stack budget tracking application built to help you take control 
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/spendsmart.git
-cd spendsmart
+git clone https://github.com/swapnil404/SpendSmart.git
+cd SpendSmart
 
 # Install dependencies
 bun install
