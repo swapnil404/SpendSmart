@@ -8,12 +8,22 @@ import { cors } from "hono/cors";
 
 const app = new Hono();
 
-app.use("*", cors({
-  origin: [
-    "https://spendsmart.swapnilchristian.dev",
-    "http://localhost:5173",
-  ],
-}));
+app.use(
+  "*",
+  cors({
+    origin: (origin) => {
+      if (!origin) return "*";
+      if (origin.startsWith("http://localhost")) return origin;
+      if (origin.endsWith(".swapnilchristian.dev")) return origin;
+      return null;
+    },
+    allowMethods: ["GET", "POST", "PUT", "DELETE"],
+    allowHeaders: ["Content-Type", "Authorization"],
+    exposeHeaders: ["Content-Length"],
+    maxAge: 600,
+  })
+);
+
 app.use("*", logger());
 
 app.onError((err, c) => {
