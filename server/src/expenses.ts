@@ -1,57 +1,55 @@
 import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { z } from "zod";
-import {cors} from 'hono/cors';
+import { cors } from 'hono/cors';
+import { db } from "./db/db";
+import { transactionsTable } from "./db/schema";
+import { desc, eq, sql } from "drizzle-orm";
 
 const expensesRoute = new Hono();
 
-expensesRoute.use("*", cors());
-
 expensesRoute.use("*", logger());
 
-
-const fakeExpenses: expense[] = [
-  { id: 1, title: "Groceries", amount: 52.75 },
-  { id: 2, title: "Electricity Bill", amount: 120.0 },
-  { id: 3, title: "Monthly Rent", amount: 1500.0 },
-  { id: 4, title: "Gym Membership", amount: 29.99 },
-  { id: 5, title: "Coffee", amount: 4.5 },
-];
-
-const expenseSchema = z.object({
-  id: z.number().int().positive(),
-  title: z.string().min(1).max(100),
-  amount: z.number().positive(),
-});
-type expense = z.infer<typeof expenseSchema>
-
 const expensePostSchema = z.object({
-  title: z.string().min(1).max(100),
   amount: z.number().positive(),
+  date: z.string().length(10), // YYYY-MM-DD
+  categoryId: z.string().min(1),
+  paymentMethod: z.enum(['cash', 'upi', 'card', 'netbanking']),
+  notes: z.string().optional(),
+  isRecurring: z.boolean().default(false),
 });
 
 expensesRoute.get("/", async (c) => {
-  return c.json({ expense: fakeExpenses });
+  const transactions = await db.select().from(transactionsTable).orderBy(desc(transactionsTable.date));
+  return c.json({ expense: transactions });
 });
 
-expensesRoute.get ("/total-spent", async (c) =>{
-  const total = fakeExpenses.reduce((sum, expense) => sum + expense.amount, 0);
-return c.json({ total });
+expensesRoute.get("/total-spent", async (c) => {
+  const result = await db.select({
+    total: sql<number>`sum(${transactionsTable.amount})`
+  }).from(transactionsTable);
+  
+  const total = result[0]?.total || 0;
+  return c.json({ total });
 })
+
 expensesRoute.post("/", async (c) => {
   const data = await c.req.json();
-  const expense = expensePostSchema.parse(data);
-  fakeExpenses.push({...expense,id:fakeExpenses.length+1})
-  return c.json({ expense });
+  const validatedData = expensePostSchema.parse(data);
+  
+  const [newTransaction] = await db.insert(transactionsTable).values(validatedData).returning();
+  
+  return c.json({ expense: newTransaction });
 });
 
 expensesRoute.get("/:id{[0-9]+}", async (c) => {
   const id = Number.parseInt(c.req.param("id"));
-  const expense = fakeExpenses.find(expense => expense.id === id);
-  if (!expense){
+  const [transaction] = await db.select().from(transactionsTable).where(eq(transactionsTable.id, id));
+  
+  if (!transaction) {
     return c.notFound();
-  }else{
-  return c.json({expense});
+  } else {
+    return c.json({ expense: transaction });
   }
 });
 
