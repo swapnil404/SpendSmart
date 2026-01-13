@@ -8,7 +8,12 @@ import { cors } from "hono/cors";
 
 const app = new Hono();
 
-app.use("*", cors());
+app.use("*", cors({
+  origin: [
+    "https://spendsmart.swapnilchristian.dev",
+    "http://localhost:5173",
+  ],
+}));
 app.use("*", logger());
 
 app.onError((err, c) => {
