@@ -1,7 +1,6 @@
 import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { z } from "zod";
-import { cors } from 'hono/cors';
 import { db } from "./db/db";
 import { transactionsTable } from "./db/schema";
 import { desc, eq, sql } from "drizzle-orm";

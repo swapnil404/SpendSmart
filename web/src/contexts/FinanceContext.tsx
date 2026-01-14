@@ -1,15 +1,19 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Category, Transaction, Budget } from '@/lib/types';
-import { DEFAULT_CATEGORIES, SAMPLE_TRANSACTIONS, DEFAULT_BUDGET, getCurrentMonth } from '@/lib/data';
+import { DEFAULT_CATEGORIES, DEFAULT_BUDGET, getCurrentMonth } from '@/lib/data';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 interface FinanceContextType {
   categories: Category[];
   transactions: Transaction[];
   budget: Budget;
+  totalSpent: number;
+  isLoading: boolean;
   addCategory: (category: Omit<Category, 'id' | 'isDefault'>) => void;
   updateCategory: (id: string, updates: Partial<Category>) => void;
   deleteCategory: (id: string) => void;
-  addTransaction: (transaction: Omit<Transaction, 'id'>) => void;
+  addTransaction: (transaction: Omit<Transaction, 'id'>) => Promise<void>;
   updateTransaction: (id: string, updates: Partial<Transaction>) => void;
   deleteTransaction: (id: string) => void;
   updateBudget: (budget: Budget) => void;
@@ -18,13 +22,13 @@ interface FinanceContextType {
   getSubscriptionTotal: () => number;
   getRemainingBudget: (month?: string) => number;
   getCategoryById: (id: string) => Category | undefined;
+  refreshTransactions: () => Promise<void>;
 }
 
 const FinanceContext = createContext<FinanceContextType | undefined>(undefined);
 
 const STORAGE_KEYS = {
   categories: 'spendsmart-categories',
-  transactions: 'spendsmart-transactions',
   budget: 'spendsmart-budget',
 };
 
@@ -49,20 +53,67 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   const [categories, setCategories] = useState<Category[]>(() =>
     loadFromStorage(STORAGE_KEYS.categories, DEFAULT_CATEGORIES)
   );
-  const [transactions, setTransactions] = useState<Transaction[]>(() =>
-    loadFromStorage(STORAGE_KEYS.transactions, SAMPLE_TRANSACTIONS)
-  );
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [totalSpent, setTotalSpent] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState(true);
   const [budget, setBudget] = useState<Budget>(() =>
     loadFromStorage(STORAGE_KEYS.budget, DEFAULT_BUDGET)
   );
 
+  // Fetch transactions from API
+  const fetchTransactions = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/expenses`);
+      if (response.ok) {
+        const data = await response.json();
+        // Map DB response to Transaction type
+        const txs: Transaction[] = (data.expense || []).map((tx: any) => ({
+          id: String(tx.id),
+          amount: tx.amount,
+          date: tx.date,
+          categoryId: tx.categoryId,
+          paymentMethod: tx.paymentMethod,
+          notes: tx.notes || undefined,
+          isRecurring: tx.isRecurring || false,
+        }));
+        setTransactions(txs);
+      }
+    } catch (error) {
+      console.error('Failed to fetch transactions:', error);
+    }
+  };
+
+  // Fetch total spent from API
+  const fetchTotalSpent = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/expenses/total-spent`);
+      if (response.ok) {
+        const data = await response.json();
+        setTotalSpent(data.total || 0);
+      }
+    } catch (error) {
+      console.error('Failed to fetch total spent:', error);
+    }
+  };
+
+  // Refresh both transactions and total
+  const refreshTransactions = async () => {
+    await Promise.all([fetchTransactions(), fetchTotalSpent()]);
+  };
+
+  // Load data on mount
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      await refreshTransactions();
+      setIsLoading(false);
+    };
+    loadData();
+  }, []);
+
   useEffect(() => {
     saveToStorage(STORAGE_KEYS.categories, categories);
   }, [categories]);
-
-  useEffect(() => {
-    saveToStorage(STORAGE_KEYS.transactions, transactions);
-  }, [transactions]);
 
   useEffect(() => {
     saveToStorage(STORAGE_KEYS.budget, budget);
@@ -87,12 +138,23 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     setCategories((prev) => prev.filter((cat) => cat.id !== id || cat.isDefault));
   };
 
-  const addTransaction = (transaction: Omit<Transaction, 'id'>) => {
-    const newTransaction: Transaction = {
-      ...transaction,
-      id: `tx-${Date.now()}`,
-    };
-    setTransactions((prev) => [newTransaction, ...prev]);
+  const addTransaction = async (transaction: Omit<Transaction, 'id'>) => {
+    try {
+      const response = await fetch(`${API_URL}/api/expenses`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(transaction),
+      });
+      
+      if (response.ok) {
+        // Refresh from DB to get the actual ID and update totals
+        await refreshTransactions();
+      }
+    } catch (error) {
+      console.error('Failed to save transaction to API:', error);
+    }
   };
 
   const updateTransaction = (id: string, updates: Partial<Transaction>) => {
@@ -143,6 +205,8 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
         categories,
         transactions,
         budget,
+        totalSpent,
+        isLoading,
         addCategory,
         updateCategory,
         deleteCategory,
@@ -155,6 +219,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
         getSubscriptionTotal,
         getRemainingBudget,
         getCategoryById,
+        refreshTransactions,
       }}
     >
       {children}
