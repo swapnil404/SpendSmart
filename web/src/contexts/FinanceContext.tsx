@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { Category, Transaction, Budget } from '@/lib/types';
 import { DEFAULT_CATEGORIES, DEFAULT_BUDGET, getCurrentMonth } from '@/lib/data';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, "");
 
 interface FinanceContextType {
   categories: Category[];
