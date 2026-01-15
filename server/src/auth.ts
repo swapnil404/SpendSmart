@@ -19,12 +19,16 @@ export const auth = betterAuth({
   ],
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: true
+    requireEmailVerification: false
   },
   emailVerification: {
-    sendOnSignUp: true,
+    sendOnSignUp: false,
     autoSignInAfterVerification: true
   },
-  trustedOrigins: ["http://localhost:5173", "http://localhost:5174"],
-
+  trustedOrigins: [
+    "http://localhost:5173", 
+    "http://localhost:5174",
+    "https://spendsmart.swapnilchristian.dev",
+    process.env.VITE_API_URL as string
+  ].filter(Boolean)
 });

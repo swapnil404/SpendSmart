@@ -26,19 +26,38 @@ export function LoginForm({
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    await authClient.signIn.email({
-      email,
-      password,
-    }, {
-      onSuccess: () => {
-        toast.success("Logged in successfully")
-        navigate({ to: "/dashboard" })
-      },
-      onError: (ctx) => {
-        toast.error(ctx.error.message)
-        setLoading(false)
-      }
-    })
+    try {
+      console.log("Attempting login...")
+      // Set a fallback timeout in case Better Auth doesn't resolve/reject
+      const timeoutId = setTimeout(() => {
+        if (loading) {
+          setLoading(false)
+          toast.error("Login timed out. Please check your connection.")
+        }
+      }, 10000)
+
+      await authClient.signIn.email({
+        email,
+        password,
+      }, {
+        onSuccess: () => {
+          clearTimeout(timeoutId)
+          console.log("Login success")
+          toast.success("Logged in successfully")
+          navigate({ to: "/dashboard" })
+        },
+        onError: (ctx) => {
+          clearTimeout(timeoutId)
+          console.error("Login error", ctx.error)
+          toast.error(ctx.error.message)
+          setLoading(false)
+        }
+      })
+    } catch (err) {
+      console.error("Login caught error", err)
+      toast.error("An unexpected error occurred")
+      setLoading(false)
+    }
   }
 
   return (

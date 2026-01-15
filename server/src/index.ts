@@ -45,7 +45,10 @@ app.get("/", (c) => {
 
 app.get("/test", (c) => c.text("Hono!"));
 
-app.all("/api/auth/*", (c) => auth.handler(c.req.raw));
+app.all("/api/auth/*", (c) => {
+  console.log(`Auth request: ${c.req.method} ${c.req.url}`);
+  return auth.handler(c.req.raw);
+});
 
 app.route("/api/expenses", expensesRoute);
 
