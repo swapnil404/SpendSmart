@@ -27,7 +27,7 @@ export default function ForgotPasswordPage() {
     e.preventDefault()
     setLoading(true)
     try {
-      await authClient.forgetPassword({
+      await (authClient as any).forgetPassword({
         email,
         redirectTo: "/reset-password",
       }, {
@@ -35,7 +35,7 @@ export default function ForgotPasswordPage() {
           setSubmitted(true)
           toast.success("Reset link sent to your email")
         },
-        onError: (ctx) => {
+        onError: (ctx: any) => {
           toast.error(ctx.error.message)
           setLoading(false)
         }

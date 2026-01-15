@@ -43,7 +43,7 @@ export default function ResetPasswordPage() {
 
     setLoading(true)
     try {
-      await authClient.resetPassword({
+      await (authClient as any).resetPassword({
         newPassword: password,
         token,
       }, {
@@ -51,7 +51,7 @@ export default function ResetPasswordPage() {
           toast.success("Password reset successfully")
           navigate({ to: "/" })
         },
-        onError: (ctx) => {
+        onError: (ctx: any) => {
           toast.error(ctx.error.message)
           setLoading(false)
         }

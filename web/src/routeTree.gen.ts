@@ -12,12 +12,15 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TransactionsRouteImport } from './routes/transactions'
 import { Route as SubscriptionsRouteImport } from './routes/subscriptions'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as OtpRouteImport } from './routes/otp'
 import { Route as NotFoundRouteImport } from './routes/not-found'
 import { Route as InsightsRouteImport } from './routes/insights'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ComingSoonRouteImport } from './routes/coming-soon'
 import { Route as CategoriesRouteImport } from './routes/categories'
 import { Route as BudgetsRouteImport } from './routes/budgets'
 import { Route as AffordRouteImport } from './routes/afford'
@@ -36,6 +39,11 @@ const SubscriptionsRoute = SubscriptionsRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReportsRoute = ReportsRouteImport.update({
@@ -63,9 +71,19 @@ const InsightsRoute = InsightsRouteImport.update({
   path: '/insights',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ComingSoonRoute = ComingSoonRouteImport.update({
+  id: '/coming-soon',
+  path: '/coming-soon',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CategoriesRoute = CategoriesRouteImport.update({
@@ -94,12 +112,15 @@ export interface FileRoutesByFullPath {
   '/afford': typeof AffordRoute
   '/budgets': typeof BudgetsRoute
   '/categories': typeof CategoriesRoute
+  '/coming-soon': typeof ComingSoonRoute
   '/dashboard': typeof DashboardRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/insights': typeof InsightsRoute
   '/not-found': typeof NotFoundRoute
   '/otp': typeof OtpRoute
   '/register': typeof RegisterRoute
   '/reports': typeof ReportsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/settings': typeof SettingsRoute
   '/subscriptions': typeof SubscriptionsRoute
   '/transactions': typeof TransactionsRoute
@@ -109,12 +130,15 @@ export interface FileRoutesByTo {
   '/afford': typeof AffordRoute
   '/budgets': typeof BudgetsRoute
   '/categories': typeof CategoriesRoute
+  '/coming-soon': typeof ComingSoonRoute
   '/dashboard': typeof DashboardRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/insights': typeof InsightsRoute
   '/not-found': typeof NotFoundRoute
   '/otp': typeof OtpRoute
   '/register': typeof RegisterRoute
   '/reports': typeof ReportsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/settings': typeof SettingsRoute
   '/subscriptions': typeof SubscriptionsRoute
   '/transactions': typeof TransactionsRoute
@@ -125,12 +149,15 @@ export interface FileRoutesById {
   '/afford': typeof AffordRoute
   '/budgets': typeof BudgetsRoute
   '/categories': typeof CategoriesRoute
+  '/coming-soon': typeof ComingSoonRoute
   '/dashboard': typeof DashboardRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/insights': typeof InsightsRoute
   '/not-found': typeof NotFoundRoute
   '/otp': typeof OtpRoute
   '/register': typeof RegisterRoute
   '/reports': typeof ReportsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/settings': typeof SettingsRoute
   '/subscriptions': typeof SubscriptionsRoute
   '/transactions': typeof TransactionsRoute
@@ -142,12 +169,15 @@ export interface FileRouteTypes {
     | '/afford'
     | '/budgets'
     | '/categories'
+    | '/coming-soon'
     | '/dashboard'
+    | '/forgot-password'
     | '/insights'
     | '/not-found'
     | '/otp'
     | '/register'
     | '/reports'
+    | '/reset-password'
     | '/settings'
     | '/subscriptions'
     | '/transactions'
@@ -157,12 +187,15 @@ export interface FileRouteTypes {
     | '/afford'
     | '/budgets'
     | '/categories'
+    | '/coming-soon'
     | '/dashboard'
+    | '/forgot-password'
     | '/insights'
     | '/not-found'
     | '/otp'
     | '/register'
     | '/reports'
+    | '/reset-password'
     | '/settings'
     | '/subscriptions'
     | '/transactions'
@@ -172,12 +205,15 @@ export interface FileRouteTypes {
     | '/afford'
     | '/budgets'
     | '/categories'
+    | '/coming-soon'
     | '/dashboard'
+    | '/forgot-password'
     | '/insights'
     | '/not-found'
     | '/otp'
     | '/register'
     | '/reports'
+    | '/reset-password'
     | '/settings'
     | '/subscriptions'
     | '/transactions'
@@ -188,12 +224,15 @@ export interface RootRouteChildren {
   AffordRoute: typeof AffordRoute
   BudgetsRoute: typeof BudgetsRoute
   CategoriesRoute: typeof CategoriesRoute
+  ComingSoonRoute: typeof ComingSoonRoute
   DashboardRoute: typeof DashboardRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   InsightsRoute: typeof InsightsRoute
   NotFoundRoute: typeof NotFoundRoute
   OtpRoute: typeof OtpRoute
   RegisterRoute: typeof RegisterRoute
   ReportsRoute: typeof ReportsRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SettingsRoute: typeof SettingsRoute
   SubscriptionsRoute: typeof SubscriptionsRoute
   TransactionsRoute: typeof TransactionsRoute
@@ -220,6 +259,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reports': {
@@ -257,11 +303,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InsightsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/coming-soon': {
+      id: '/coming-soon'
+      path: '/coming-soon'
+      fullPath: '/coming-soon'
+      preLoaderRoute: typeof ComingSoonRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/categories': {
@@ -300,12 +360,15 @@ const rootRouteChildren: RootRouteChildren = {
   AffordRoute: AffordRoute,
   BudgetsRoute: BudgetsRoute,
   CategoriesRoute: CategoriesRoute,
+  ComingSoonRoute: ComingSoonRoute,
   DashboardRoute: DashboardRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   InsightsRoute: InsightsRoute,
   NotFoundRoute: NotFoundRoute,
   OtpRoute: OtpRoute,
   RegisterRoute: RegisterRoute,
   ReportsRoute: ReportsRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SettingsRoute: SettingsRoute,
   SubscriptionsRoute: SubscriptionsRoute,
   TransactionsRoute: TransactionsRoute,
