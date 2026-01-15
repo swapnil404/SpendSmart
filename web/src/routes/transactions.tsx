@@ -14,8 +14,11 @@ import {
 import { Search } from 'lucide-react';
 import { createFileRoute } from '@tanstack/react-router';
 
+import { requireAuth } from "@/lib/auth-guard";
+
 export const Route = createFileRoute('/transactions')({
   component: Transactions,
+  beforeLoad: requireAuth,
 })
 
 function Transactions() {

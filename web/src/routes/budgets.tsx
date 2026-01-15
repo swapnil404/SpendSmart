@@ -19,8 +19,11 @@ import { Pencil } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { createFileRoute } from '@tanstack/react-router';
 
+import { requireAuth } from "@/lib/auth-guard";
+
 export const Route = createFileRoute('/budgets')({
   component: Budgets,
+  beforeLoad: requireAuth,
 })
 
 function Budgets() {

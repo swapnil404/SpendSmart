@@ -18,8 +18,11 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { createFileRoute } from '@tanstack/react-router';
 
+import { requireAuth } from "@/lib/auth-guard";
+
 export const Route = createFileRoute('/categories')({
   component: Categories,
+  beforeLoad: requireAuth,
 })
 
 const CATEGORY_COLORS = [

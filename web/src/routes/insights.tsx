@@ -8,8 +8,11 @@ import { TrendingUp, TrendingDown, Repeat, PiggyBank, Lightbulb } from 'lucide-r
 import { cn } from '@/lib/utils';
 import { createFileRoute } from '@tanstack/react-router';
 
+import { requireAuth } from "@/lib/auth-guard";
+
 export const Route = createFileRoute('/insights')({
   component: InsightsRoute,
+  beforeLoad: requireAuth,
 })
 
 interface InsightCardProps {

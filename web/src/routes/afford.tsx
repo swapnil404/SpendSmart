@@ -17,8 +17,11 @@ import { CheckCircle2, XCircle, AlertCircle, HelpCircle, Wallet } from 'lucide-r
 import { cn } from '@/lib/utils';
 import { createFileRoute } from '@tanstack/react-router';
 
+import { requireAuth } from "@/lib/auth-guard";
+
 export const Route = createFileRoute('/afford')({
   component: CanIAffordIt,
+  beforeLoad: requireAuth,
 })
 
 function CanIAffordIt() {

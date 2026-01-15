@@ -7,8 +7,11 @@ import { CategoryIcon } from '@/components/CategoryIcon';
 import { Repeat, AlertTriangle } from 'lucide-react';
 import { createFileRoute } from '@tanstack/react-router';
 
+import { requireAuth } from "@/lib/auth-guard";
+
 export const Route = createFileRoute('/subscriptions')({
   component: Subscriptions,
+  beforeLoad: requireAuth,
 })
 
 function Subscriptions() {

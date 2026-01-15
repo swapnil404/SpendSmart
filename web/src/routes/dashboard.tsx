@@ -14,18 +14,11 @@ import { useQuery } from "@tanstack/react-query";
 
 import { authClient } from "@/lib/auth-client";
 import { apiFetch } from "@/lib/api";
-import { redirect } from "@tanstack/react-router";
+import { requireAuth } from "@/lib/auth-guard";
 
 export const Route = createFileRoute('/dashboard')({
   component: Dashboard,
-  beforeLoad: async () => {
-    const session = await authClient.getSession();
-    if (!session.data) {
-      throw redirect({
-        to: "/",
-      });
-    }
-  },
+  beforeLoad: requireAuth,
 })
 
 async function fetchTotal() {

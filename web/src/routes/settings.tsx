@@ -24,8 +24,11 @@ import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { authClient } from "@/lib/auth-client";
 import { apiFetch } from "@/lib/api";
 
+import { requireAuth } from "@/lib/auth-guard";
+
 export const Route = createFileRoute('/settings')({
   component: Settings,
+  beforeLoad: requireAuth,
 })
 
 function Settings() {
