@@ -46,16 +46,21 @@ app.get("/", (c) => {
 app.get("/test", (c) => c.text("Hono!"));
 
 app.post("/api/check-email", async (c) => {
-  const { email } = await c.req.json();
-  const { db } = await import("./db/db");
-  const { user } = await import("./db/schemas/auth");
-  const { eq } = await import("drizzle-orm");
+  try {
+    const { email } = await c.req.json();
+    const { db } = await import("./db/db");
+    const { user } = await import("./db/schemas/auth");
+    const { eq } = await import("drizzle-orm");
 
-  const existingUser = await db.query.user.findFirst({
-    where: eq(user.email, email),
-  });
+    const existingUser = await db.query.user.findFirst({
+      where: eq(user.email, email),
+    });
 
-  return c.json({ exists: !!existingUser });
+    return c.json({ exists: !!existingUser });
+  } catch (error) {
+    console.error("Error checking email:", error);
+    return c.json({ exists: false, error: "Failed to check email" }, 500);
+  }
 });
 
 app.all("/api/auth/*", (c) => {

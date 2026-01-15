@@ -36,6 +36,12 @@ export default function ForgotPasswordPage() {
         body: JSON.stringify({ email }),
       });
       
+      if (!checkResponse.ok) {
+        toast.error("Failed to verify email. Please try again.");
+        setLoading(false);
+        return;
+      }
+      
       const { exists } = await checkResponse.json();
       
       if (!exists) {
@@ -59,7 +65,7 @@ export default function ForgotPasswordPage() {
         }
       })
     } catch (error) {
-      toast.error("An error occurred")
+      toast.error("An error occurred. Please try again.")
       setLoading(false)
     }
   }
