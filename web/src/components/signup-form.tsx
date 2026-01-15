@@ -116,8 +116,10 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "Creating account..." : "Create Account"}
               </Button>
-              <Button variant="outline" type="button" className="w-full">
-                Sign up with Google
+              <Button variant="outline" type="button" className="w-full" asChild>
+                <Link to="/coming-soon">
+                  Sign up with Google
+                </Link>
               </Button>
             </div>
             <div className="mt-4 text-center text-sm">

@@ -10,8 +10,6 @@ import { formatCurrency, getCurrentMonth, getMonthName } from '@/lib/data';
 import { Wallet, TrendingUp, Receipt, PiggyBank, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link, createFileRoute } from '@tanstack/react-router';
-import { useQuery } from "@tanstack/react-query";
-
 import { authClient } from "@/lib/auth-client";
 import { apiFetch } from "@/lib/api";
 import { requireAuth } from "@/lib/auth-guard";
@@ -20,12 +18,6 @@ export const Route = createFileRoute('/dashboard')({
   component: Dashboard,
   beforeLoad: requireAuth,
 })
-
-async function fetchTotal() {
-  const { data, error } = await apiFetch("/api/expenses/total-spent");
-  if (error) return null;
-  return data as { total: number };
-}
 
 function Dashboard() {
   const {
@@ -38,15 +30,9 @@ function Dashboard() {
     refreshTransactions
   } = useFinance();
 
-  const totalSpentQuery = useQuery({
-    queryKey: ["get-total-spent"],
-    queryFn: fetchTotal,
-  });
-
   // Force refresh on mount to ensure fresh data
   useEffect(() => {
     refreshTransactions();
-    totalSpentQuery.refetch();
   }, []);
 
   const currentMonth = getCurrentMonth();
@@ -81,12 +67,10 @@ function Dashboard() {
     >
       <div className="space-y-6 max-w-6xl">
         {/* Stats Grid */}
-
-        {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
             title="Total Spent"
-            value={totalSpentQuery.isLoading ? "..." : formatCurrency(totalSpentQuery.data?.total || monthlySpending)}
+            value={formatCurrency(monthlySpending)}
             subtitle="This month"
             icon={<Wallet className="h-5 w-5" />}
             variant="primary"

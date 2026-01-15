@@ -82,7 +82,7 @@ export const auth = betterAuth({
     }
   },
   emailVerification: {
-    sendOnSignUp: false,
+    sendOnSignUp: true,
     autoSignInAfterVerification: true
   },
   trustedOrigins: [
