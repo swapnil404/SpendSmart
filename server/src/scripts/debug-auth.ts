@@ -1,23 +1,36 @@
 import { auth } from "../auth";
 
-console.log("Inspecting Better Auth instance...");
-try {
-    // Better Auth instance usually has an 'api' or 'options' property
-    // We want to see if we can find the registered routes.
-    // In some versions, auth.api is the router.
-    
-    // Attempt to log relevant keys
-    console.log("Keys:", Object.keys(auth));
-    
-    if ('api' in auth) {
-        console.log("API keys:", Object.keys((auth as any).api));
-    }
-    
-    if ('options' in auth) {
-         const options = (auth as any).options;
-         console.log("Email and Password enabled:", options.emailAndPassword?.enabled);
-    }
+async function main() {
+    const baseURL = (auth as any).options.baseURL;
+    console.log("Configured Base URL:", baseURL);
 
-} catch (e) {
-    console.error("Error inspecting auth:", e);
+    console.log("--- TEST 1: forget-password ---");
+    await testRoute(`${baseURL}/forget-password`);
+
+    console.log("\n--- TEST 2: forgot-password ---");
+    await testRoute(`${baseURL}/forgot-password`);
+
+    console.log("\n--- TEST 3: sign-up/email (Control) ---");
+    await testRoute(`${baseURL}/sign-up/email`, {
+        email: "test-control@example.com",
+        password: "password123",
+        name: "Test User"
+    });
 }
+
+async function testRoute(url: string, body: any = { email: "test@example.com" }) {
+    const req = new Request(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+    });
+
+    try {
+        const res = await auth.handler(req);
+        console.log(`[${url}] Status:`, res.status);
+    } catch (e) {
+        console.error(`[${url}] Error:`, e);
+    }
+}
+
+main();

@@ -109,7 +109,7 @@ function Settings() {
                 size="sm"
                 onClick={async () => {
                   if (user?.email) {
-                    await (authClient as any).forgetPassword({
+                    await (authClient as any).requestPasswordReset({
                       email: user.email,
                       redirectTo: "/reset-password"
                     });
