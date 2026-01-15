@@ -5,6 +5,17 @@ import { db } from "./db/db";
 import * as schema from "./db/schema";
 import { emailOTP } from "better-auth/plugins";
 
+const baseURL = (process.env.BETTER_AUTH_URL || process.env.VITE_API_URL || '').replace(/\/$/, "") + '/api/auth';
+console.log(`Auth Base URL: ${baseURL}`);
+
+const trustedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "https://spendsmart.swapnilchristian.dev",
+  process.env.VITE_API_URL as string
+];
+console.log(`Auth Trusted Origins: ${trustedOrigins.join(', ')}`);
+
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
@@ -31,5 +42,13 @@ export const auth = betterAuth({
     "http://localhost:5174",
     "https://spendsmart.swapnilchristian.dev",
     process.env.VITE_API_URL as string
-  ].filter(Boolean)
+  ].filter(Boolean),
+  cookies: {
+    sessionToken: {
+      options: {
+        sameSite: "none",
+        secure: true
+      }
+    }
+  }
 });

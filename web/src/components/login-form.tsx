@@ -43,10 +43,13 @@ export function LoginForm({
         email,
         password,
       }, {
-        onSuccess: () => {
-          console.log("Login success")
+        onSuccess: async () => {
+          console.log("Login success: Redirecting to dashboard...")
           toast.success("Logged in successfully")
-          navigate({ to: "/dashboard" })
+          // Using window.location.href to ensure a full page reload so cookies are properly sent
+          setTimeout(() => {
+            window.location.href = "/dashboard"
+          }, 100)
         },
         onError: (ctx) => {
           console.error("Login error", ctx.error)
