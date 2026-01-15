@@ -6,7 +6,7 @@ import * as schema from "./db/schema";
 import { emailOTP } from "better-auth/plugins";
 import nodemailer from "nodemailer";
 
-const baseURL = (process.env.BETTER_AUTH_URL || process.env.VITE_API_URL || '').replace(/\/$/, "") + '/api/auth';
+const baseURL = (process.env.BETTER_AUTH_URL || process.env.VITE_API_URL || "http://localhost:3001").replace(/\/$/, "") + '/api/auth';
 console.log(`Auth Base URL: ${baseURL}`);
 
 const trustedOrigins = [
@@ -32,7 +32,7 @@ export const auth = betterAuth({
     provider: "pg",
     schema: schema
   }),
-  baseURL: (process.env.BETTER_AUTH_URL || process.env.VITE_API_URL || '').replace(/\/$/, "") + '/api/auth',
+  baseURL: baseURL,
   plugins: [
     emailOTP({
         async sendVerificationOTP({ email, otp, type }) {
