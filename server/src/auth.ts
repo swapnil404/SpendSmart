@@ -101,7 +101,9 @@ export const auth = betterAuth({
     crossSubDomainCookies: {
       enabled: isProduction,
       domain: isProduction ? ".swapnilchristian.dev" : undefined
-    }
+    },
+    // Ensure email sending completes before response (required for Vercel/serverless)
+    deferTasks: false
   },
   cookies: {
     sessionToken: {
