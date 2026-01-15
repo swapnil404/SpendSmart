@@ -10,6 +10,7 @@ export const auth = betterAuth({
     provider: "pg",
     schema: schema
   }),
+  baseURL: (process.env.BETTER_AUTH_URL || process.env.VITE_API_URL || '').replace(/\/$/, "") + '/api/auth',
   plugins: [
     emailOTP({
         async sendVerificationOTP({ email, otp, type }) {

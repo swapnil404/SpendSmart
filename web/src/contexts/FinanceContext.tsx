@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Category, Transaction, Budget } from '@/lib/types';
 import { DEFAULT_CATEGORIES, DEFAULT_BUDGET, getCurrentMonth } from '@/lib/data';
+import { authClient } from '@/lib/auth-client';
 
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, "");
 
@@ -38,12 +39,9 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
 
   const fetchTransactions = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/expenses`, {
-        credentials: 'include'
-      });
-      if (response.ok) {
-        const data = await response.json();
-        const txs: Transaction[] = (data.expense || []).map((tx: any) => ({
+      const { data, error } = await authClient.$fetch("/api/expenses");
+      if (data) {
+        const txs: Transaction[] = ((data as any).expense || []).map((tx: any) => ({
           id: String(tx.id),
           amount: tx.amount,
           date: tx.date,
@@ -62,14 +60,10 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   // Fetch custom categories
   const fetchCategories = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/expenses/categories`, {
-        credentials: 'include'
-      });
-      if (response.ok) {
-        const data = await response.json();
+      const { data, error } = await authClient.$fetch("/api/expenses/categories");
+      if (data) {
         // Merge default categories with user categories
-        // Ensure no duplicates if IDs clash (though UUIDs shouldn't)
-        const userCategories: Category[] = (data.categories || []).map((cat: any) => ({
+        const userCategories: Category[] = ((data as any).categories || []).map((cat: any) => ({
             id: cat.id,
             name: cat.name,
             color: cat.color || undefined,
@@ -86,12 +80,9 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   // Fetch total spent from API
   const fetchTotalSpent = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/expenses/total-spent`, {
-        credentials: 'include'
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setTotalSpent(data.total || 0);
+      const { data, error } = await authClient.$fetch("/api/expenses/total-spent");
+      if (data) {
+        setTotalSpent((data as any).total || 0);
       }
     } catch (error) {
       console.error('Failed to fetch total spent:', error);
@@ -101,14 +92,9 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   // Fetch budget from API
   const fetchBudget = async () => {
     try {
-        const response = await fetch(`${API_URL}/api/expenses/budget`, {
-            credentials: 'include'
-        });
-        if (response.ok) {
-            const data = await response.json();
-            if (data.budget) {
-                setBudget(data.budget);
-            }
+        const { data, error } = await authClient.$fetch("/api/expenses/budget");
+        if (data && (data as any).budget) {
+            setBudget((data as any).budget);
         }
     } catch (error) {
         console.error('Failed to fetch budget:', error);
@@ -139,13 +125,11 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
 
   const addCategory = async (category: Omit<Category, 'id' | 'isDefault'>) => {
     try {
-        const response = await fetch(`${API_URL}/api/expenses/categories`, {
+        const { data, error } = await authClient.$fetch("/api/expenses/categories", {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
             body: JSON.stringify(category)
         });
-        if (response.ok) {
+        if (data) {
             await fetchCategories();
         }
     } catch (error) {
@@ -165,16 +149,12 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
 
   const addTransaction = async (transaction: Omit<Transaction, 'id'>) => {
     try {
-      const response = await fetch(`${API_URL}/api/expenses`, {
+      const { data, error } = await authClient.$fetch("/api/expenses", {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
         body: JSON.stringify(transaction),
       });
       
-      if (response.ok) {
+      if (data) {
         // Refresh from DB to get the actual ID and update totals
         await refreshTransactions();
       }
@@ -195,13 +175,11 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
 
   const updateBudget = async (newBudget: Budget) => {
     try {
-        const response = await fetch(`${API_URL}/api/expenses/budget`, {
+        const { data, error } = await authClient.$fetch("/api/expenses/budget", {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
             body: JSON.stringify(newBudget)
         });
-        if (response.ok) {
+        if (data) {
              setBudget(newBudget);
         }
     } catch (error) {

@@ -28,10 +28,9 @@ export const Route = createFileRoute('/dashboard')({
 })
 
 async function fetchTotal() {
-  const apiUrl = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
-  const res = await fetch(`${apiUrl}/api/expenses/total-spent`, { credentials: 'include' });
-  if (!res.ok) return null;
-  return res.json();
+  const { data, error } = await authClient.$fetch("/api/expenses/total-spent");
+  if (error) return null;
+  return data as { total: number };
 }
 
 function Dashboard() {

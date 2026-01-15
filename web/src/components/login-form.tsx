@@ -29,25 +29,26 @@ export function LoginForm({
     try {
       console.log("Attempting login...")
       // Set a fallback timeout in case Better Auth doesn't resolve/reject
-      const timeoutId = setTimeout(() => {
-        if (loading) {
-          setLoading(false)
-          toast.error("Login timed out. Please check your connection.")
-        }
-      }, 10000)
+      setTimeout(() => {
+        setLoading(currentLoading => {
+          if (currentLoading) {
+            toast.error("Login timed out. Please check your connection.")
+            return false;
+          }
+          return currentLoading;
+        })
+      }, 15000)
 
       await authClient.signIn.email({
         email,
         password,
       }, {
         onSuccess: () => {
-          clearTimeout(timeoutId)
           console.log("Login success")
           toast.success("Logged in successfully")
           navigate({ to: "/dashboard" })
         },
         onError: (ctx) => {
-          clearTimeout(timeoutId)
           console.error("Login error", ctx.error)
           toast.error(ctx.error.message)
           setLoading(false)
