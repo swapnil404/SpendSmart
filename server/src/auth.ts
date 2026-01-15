@@ -16,6 +16,8 @@ const trustedOrigins = [
 ];
 console.log(`Auth Trusted Origins: ${trustedOrigins.join(', ')}`);
 
+const isProduction = process.env.NODE_ENV === "production" || process.env.VERCEL === "1";
+
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
@@ -43,11 +45,21 @@ export const auth = betterAuth({
     "https://spendsmart.swapnilchristian.dev",
     process.env.VITE_API_URL as string
   ].filter(Boolean),
+  advanced: {
+    crossSubDomainCookies: {
+      enabled: isProduction,
+      domain: isProduction ? ".swapnilchristian.dev" : undefined
+    }
+  },
   cookies: {
     sessionToken: {
+      name: "better-auth.session_token",
       options: {
-        sameSite: "none",
-        secure: true
+        httpOnly: true,
+        sameSite: isProduction ? "none" as const : "lax" as const,
+        secure: isProduction,
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7 // 7 days
       }
     }
   }
