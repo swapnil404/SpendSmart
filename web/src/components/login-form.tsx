@@ -22,33 +22,11 @@ export function LoginForm({
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [isOTPLogin, setIsOTPLogin] = useState(false)
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     try {
-      if (isOTPLogin) {
-        console.log("Attempting to send OTP...")
-        await authClient.emailOtp.sendVerificationOtp({
-          email,
-          type: "sign-in"
-        }, {
-          onSuccess: () => {
-            console.log("OTP sent success")
-            toast.success("OTP sent to your email")
-            navigate({ to: "/otp", search: { email, type: "sign-in" } })
-            setLoading(false)
-          },
-          onError: (ctx) => {
-            console.error("OTP Send error", ctx.error)
-            toast.error(ctx.error.message)
-            setLoading(false)
-          }
-        })
-        return
-      }
-
       console.log("Attempting login...")
       // Set a fallback timeout in case Better Auth doesn't resolve/reject
       setTimeout(() => {
@@ -90,9 +68,9 @@ export function LoginForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">{isOTPLogin ? "Login with OTP" : "Login"}</CardTitle>
+          <CardTitle className="text-2xl">Login</CardTitle>
           <CardDescription>
-            {isOTPLogin ? "Enter your email to receive a one-time password" : "Enter your email below to login to your account"}
+            Enter your email below to login to your account
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -109,36 +87,31 @@ export function LoginForm({
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
-              {!isOTPLogin && (
-                <div className="grid gap-2">
-                  <div className="flex items-center">
-                    <Label htmlFor="password">Password</Label>
-                    <a
-                      href="#"
-                      className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                    >
-                      Forgot your password?
-                    </a>
-                  </div>
-                  <Input 
-                    id="password" 
-                    type="password" 
-                    required 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
+              <div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="password">Password</Label>
+                  <Link
+                    to="/forgot-password"
+                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                  >
+                    Forgot your password?
+                  </Link>
                 </div>
-              )}
+                <Input 
+                  id="password" 
+                  type="password" 
+                  required 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? (isOTPLogin ? "Sending OTP..." : "Logging in...") : (isOTPLogin ? "Send OTP" : "Login")}
+                {loading ? "Logging in..." : "Login"}
               </Button>
-              <Button 
-                variant="outline" 
-                className="w-full" 
-                type="button"
-                onClick={() => setIsOTPLogin(!isOTPLogin)}
-              >
-                {isOTPLogin ? "Login with Password" : "Login with Email OTP"}
+              <Button variant="outline" className="w-full" type="button" asChild>
+                <Link to="/coming-soon">
+                  Login with Google
+                </Link>
               </Button>
             </div>
             <div className="mt-4 text-center text-sm">
