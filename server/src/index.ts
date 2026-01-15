@@ -45,6 +45,18 @@ app.get("/", (c) => {
 
 app.get("/test", (c) => c.text("Hono!"));
 
+app.get("/api/debug-config", (c) => {
+  return c.json({
+    baseURL: (process.env.BETTER_AUTH_URL || process.env.VITE_API_URL || "http://localhost:3001").replace(/\/$/, "") + '/api/auth',
+    betterAuthUrlEnv: process.env.BETTER_AUTH_URL,
+    viteApiUrlEnv: process.env.VITE_API_URL,
+    gmailUser: "spendsmart.noreply@gmail.com",
+    hasGmailPassword: !!process.env.GMAIL_APP_PASSWORD,
+    nodeEnv: process.env.NODE_ENV,
+    vercel: process.env.VERCEL,
+  });
+});
+
 app.all("/api/auth/*", (c) => {
   console.log(`Auth request: ${c.req.method} ${c.req.url}`);
   return auth.handler(c.req.raw);
