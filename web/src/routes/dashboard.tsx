@@ -19,11 +19,8 @@ import { redirect } from "@tanstack/react-router";
 export const Route = createFileRoute('/dashboard')({
   component: Dashboard,
   beforeLoad: async () => {
-    console.log("Checking dashboard session...")
     const session = await authClient.getSession();
-    console.log("Dashboard session data:", session.data);
     if (!session.data) {
-      console.warn("No session found, redirecting to login");
       throw redirect({
         to: "/",
       });

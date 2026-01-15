@@ -23,7 +23,7 @@ import { useState } from "react"
 import { useNavigate } from "@tanstack/react-router"
 import { toast } from "sonner"
 
-export function OTPForm({ email, ...props }: React.ComponentProps<typeof Card> & { email: string }) {
+export function OTPForm({ email, type = "email-verification", ...props }: React.ComponentProps<typeof Card> & { email: string, type?: "email-verification" | "sign-in" }) {
   const navigate = useNavigate()
   const [otp, setOtp] = useState("")
   const [loading, setLoading] = useState(false)
@@ -31,6 +31,27 @@ export function OTPForm({ email, ...props }: React.ComponentProps<typeof Card> &
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+
+    if (type === "sign-in") {
+      await authClient.signIn.emailOtp({
+        email,
+        otp,
+      }, {
+        onSuccess: () => {
+          toast.success("Logged in successfully")
+            // Small delay to ensure cookies are processed by the browser
+            setTimeout(() => {
+              navigate({ to: "/dashboard" })
+            }, 100)
+        },
+        onError: (ctx) => {
+          toast.error(ctx.error.message)
+          setLoading(false)
+        }
+      })
+      return
+    }
+
     await authClient.emailOtp.verifyEmail({
         email,
         otp,
@@ -49,7 +70,7 @@ export function OTPForm({ email, ...props }: React.ComponentProps<typeof Card> &
   const handleResend = async () => {
     await authClient.emailOtp.sendVerificationOtp({
         email,
-        type: "email-verification"
+        type: type 
     }, {
         onSuccess: () => {
             toast.success("Verification code resent")
@@ -63,14 +84,14 @@ export function OTPForm({ email, ...props }: React.ComponentProps<typeof Card> &
   return (
     <Card {...props}>
       <CardHeader>
-        <CardTitle>Enter verification code</CardTitle>
+        <CardTitle>{type === "sign-in" ? "Login with OTP" : "Enter verification code"}</CardTitle>
         <CardDescription>We sent a 6-digit code to {email}.</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleVerify}>
           <FieldGroup>
             <Field>
-              <FieldLabel htmlFor="otp">Verification code</FieldLabel>
+              <FieldLabel htmlFor="otp">Code</FieldLabel>
               <InputOTP 
                 maxLength={6} 
                 id="otp" 
