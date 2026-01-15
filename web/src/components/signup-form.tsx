@@ -40,7 +40,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
     }, {
         onSuccess: () => {
              toast.success("Account created successfully")
-             navigate({ to: "/otp", search: { email } })
+             navigate({ to: "/otp", search: { email, type: "email-verification" } })
         },
         onError: (ctx) => {
              toast.error(ctx.error.message)
