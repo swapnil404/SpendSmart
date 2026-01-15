@@ -28,6 +28,23 @@ export default function ForgotPasswordPage() {
     e.preventDefault()
     setLoading(true)
     try {
+      // 1. Check if the account exists first
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3001";
+      const checkResponse = await fetch(`${apiUrl}/api/check-email`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      
+      const { exists } = await checkResponse.json();
+      
+      if (!exists) {
+        toast.error("No account found with this email address.");
+        setLoading(false);
+        return;
+      }
+
+      // 2. If exists, request reset
       await (authClient as any).requestPasswordReset({
         email,
         redirectTo: "/reset-password",

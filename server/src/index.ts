@@ -45,16 +45,17 @@ app.get("/", (c) => {
 
 app.get("/test", (c) => c.text("Hono!"));
 
-app.get("/api/debug-config", (c) => {
-  return c.json({
-    baseURL: (process.env.BETTER_AUTH_URL || process.env.VITE_API_URL || "http://localhost:3001").replace(/\/$/, "") + '/api/auth',
-    betterAuthUrlEnv: process.env.BETTER_AUTH_URL,
-    viteApiUrlEnv: process.env.VITE_API_URL,
-    gmailUser: "spendsmart.noreply@gmail.com",
-    hasGmailPassword: !!process.env.GMAIL_APP_PASSWORD,
-    nodeEnv: process.env.NODE_ENV,
-    vercel: process.env.VERCEL,
+app.post("/api/check-email", async (c) => {
+  const { email } = await c.req.json();
+  const { db } = await import("./db/db");
+  const { user } = await import("./db/schemas/auth");
+  const { eq } = await import("drizzle-orm");
+
+  const existingUser = await db.query.user.findFirst({
+    where: eq(user.email, email),
   });
+
+  return c.json({ exists: !!existingUser });
 });
 
 app.all("/api/auth/*", (c) => {
