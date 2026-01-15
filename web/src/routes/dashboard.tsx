@@ -22,12 +22,10 @@ export const Route = createFileRoute('/dashboard')({
     const session = await authClient.getSession();
     console.log("Dashboard session data:", session.data);
     if (!session.data) {
-      console.warn("No session found (debug: not redirecting)");
-      /*
+      console.warn("No session found, redirecting to login");
       throw redirect({
         to: "/",
       });
-      */
     }
   },
 })
