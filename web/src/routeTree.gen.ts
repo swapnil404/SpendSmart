@@ -13,8 +13,11 @@ import { Route as TransactionsRouteImport } from './routes/transactions'
 import { Route as SubscriptionsRouteImport } from './routes/subscriptions'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ReportsRouteImport } from './routes/reports'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as OtpRouteImport } from './routes/otp'
 import { Route as NotFoundRouteImport } from './routes/not-found'
 import { Route as InsightsRouteImport } from './routes/insights'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CategoriesRouteImport } from './routes/categories'
 import { Route as BudgetsRouteImport } from './routes/budgets'
 import { Route as AffordRouteImport } from './routes/afford'
@@ -40,6 +43,16 @@ const ReportsRoute = ReportsRouteImport.update({
   path: '/reports',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OtpRoute = OtpRouteImport.update({
+  id: '/otp',
+  path: '/otp',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NotFoundRoute = NotFoundRouteImport.update({
   id: '/not-found',
   path: '/not-found',
@@ -48,6 +61,11 @@ const NotFoundRoute = NotFoundRouteImport.update({
 const InsightsRoute = InsightsRouteImport.update({
   id: '/insights',
   path: '/insights',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CategoriesRoute = CategoriesRouteImport.update({
@@ -76,8 +94,11 @@ export interface FileRoutesByFullPath {
   '/afford': typeof AffordRoute
   '/budgets': typeof BudgetsRoute
   '/categories': typeof CategoriesRoute
+  '/dashboard': typeof DashboardRoute
   '/insights': typeof InsightsRoute
   '/not-found': typeof NotFoundRoute
+  '/otp': typeof OtpRoute
+  '/register': typeof RegisterRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
   '/subscriptions': typeof SubscriptionsRoute
@@ -88,8 +109,11 @@ export interface FileRoutesByTo {
   '/afford': typeof AffordRoute
   '/budgets': typeof BudgetsRoute
   '/categories': typeof CategoriesRoute
+  '/dashboard': typeof DashboardRoute
   '/insights': typeof InsightsRoute
   '/not-found': typeof NotFoundRoute
+  '/otp': typeof OtpRoute
+  '/register': typeof RegisterRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
   '/subscriptions': typeof SubscriptionsRoute
@@ -101,8 +125,11 @@ export interface FileRoutesById {
   '/afford': typeof AffordRoute
   '/budgets': typeof BudgetsRoute
   '/categories': typeof CategoriesRoute
+  '/dashboard': typeof DashboardRoute
   '/insights': typeof InsightsRoute
   '/not-found': typeof NotFoundRoute
+  '/otp': typeof OtpRoute
+  '/register': typeof RegisterRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
   '/subscriptions': typeof SubscriptionsRoute
@@ -115,8 +142,11 @@ export interface FileRouteTypes {
     | '/afford'
     | '/budgets'
     | '/categories'
+    | '/dashboard'
     | '/insights'
     | '/not-found'
+    | '/otp'
+    | '/register'
     | '/reports'
     | '/settings'
     | '/subscriptions'
@@ -127,8 +157,11 @@ export interface FileRouteTypes {
     | '/afford'
     | '/budgets'
     | '/categories'
+    | '/dashboard'
     | '/insights'
     | '/not-found'
+    | '/otp'
+    | '/register'
     | '/reports'
     | '/settings'
     | '/subscriptions'
@@ -139,8 +172,11 @@ export interface FileRouteTypes {
     | '/afford'
     | '/budgets'
     | '/categories'
+    | '/dashboard'
     | '/insights'
     | '/not-found'
+    | '/otp'
+    | '/register'
     | '/reports'
     | '/settings'
     | '/subscriptions'
@@ -152,8 +188,11 @@ export interface RootRouteChildren {
   AffordRoute: typeof AffordRoute
   BudgetsRoute: typeof BudgetsRoute
   CategoriesRoute: typeof CategoriesRoute
+  DashboardRoute: typeof DashboardRoute
   InsightsRoute: typeof InsightsRoute
   NotFoundRoute: typeof NotFoundRoute
+  OtpRoute: typeof OtpRoute
+  RegisterRoute: typeof RegisterRoute
   ReportsRoute: typeof ReportsRoute
   SettingsRoute: typeof SettingsRoute
   SubscriptionsRoute: typeof SubscriptionsRoute
@@ -190,6 +229,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReportsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/otp': {
+      id: '/otp'
+      path: '/otp'
+      fullPath: '/otp'
+      preLoaderRoute: typeof OtpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/not-found': {
       id: '/not-found'
       path: '/not-found'
@@ -202,6 +255,13 @@ declare module '@tanstack/react-router' {
       path: '/insights'
       fullPath: '/insights'
       preLoaderRoute: typeof InsightsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/categories': {
@@ -240,8 +300,11 @@ const rootRouteChildren: RootRouteChildren = {
   AffordRoute: AffordRoute,
   BudgetsRoute: BudgetsRoute,
   CategoriesRoute: CategoriesRoute,
+  DashboardRoute: DashboardRoute,
   InsightsRoute: InsightsRoute,
   NotFoundRoute: NotFoundRoute,
+  OtpRoute: OtpRoute,
+  RegisterRoute: RegisterRoute,
   ReportsRoute: ReportsRoute,
   SettingsRoute: SettingsRoute,
   SubscriptionsRoute: SubscriptionsRoute,

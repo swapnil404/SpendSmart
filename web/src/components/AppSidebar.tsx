@@ -23,9 +23,11 @@ import {
   SidebarFooter,
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
+import { NavUser } from './nav-user';
+import { authClient } from '@/lib/auth-client';
 
 const mainNavItems = [
-  { title: 'Dashboard', url: '/', icon: LayoutDashboard },
+  { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
   { title: 'Transactions', url: '/transactions', icon: Receipt },
   { title: 'Budgets', url: '/budgets', icon: PiggyBank },
   { title: 'Can I Afford It?', url: '/afford', icon: HelpCircle },
@@ -40,6 +42,7 @@ const manageNavItems = [
 
 export function AppSidebar() {
   const location = useLocation();
+  const { data: session } = authClient.useSession();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -99,7 +102,7 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="p-3">
-        <SidebarMenu>
+        <SidebarMenu className="mb-2">
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <Link
@@ -117,6 +120,13 @@ export function AppSidebar() {
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
+        {session?.user && (
+          <NavUser user={{
+            name: session.user.name,
+            email: session.user.email,
+            avatar: session.user.image || ''
+          }} />
+        )}
       </SidebarFooter>
     </Sidebar>
   );

@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { expensesRoute } from "./expenses";
 import { logger } from "hono/logger";
 import { cors } from "hono/cors";
+import { auth } from "./auth";
 
 const app = new Hono();
 
@@ -43,6 +44,8 @@ app.get("/", (c) => {
 });
 
 app.get("/test", (c) => c.text("Hono!"));
+
+app.all("/api/auth/*", (c) => auth.handler(c.req.raw));
 
 app.route("/api/expenses", expensesRoute);
 

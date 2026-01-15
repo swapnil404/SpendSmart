@@ -1,41 +1,27 @@
-import { useState } from 'react';
 import { AppLayout } from '@/components/AppLayout';
 import { useFinance } from '@/contexts/FinanceContext';
 import { formatCurrency } from '@/lib/data';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Wallet, Key, User } from 'lucide-react';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogDescription,
-} from '@/components/ui/dialog';
-import { Settings as SettingsIcon, Trash2, RotateCcw, Wallet } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { createFileRoute } from '@tanstack/react-router';
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar"
+import { createFileRoute, useRouter } from '@tanstack/react-router';
+import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute('/settings')({
   component: Settings,
 })
 
 function Settings() {
-  const { budget, updateBudget, transactions, categories } = useFinance();
-  const { toast } = useToast();
-  const [resetConfirm, setResetConfirm] = useState(false);
-  const [clearConfirm, setClearConfirm] = useState(false);
+  const { budget, transactions, categories, resetData } = useFinance();
+  const router = useRouter();
+  const { data: session } = authClient.useSession();
 
-  const handleReset = () => {
-    localStorage.clear();
-    window.location.reload();
-  };
-
-  const handleClearTransactions = () => {
-    localStorage.setItem('spendsmart-transactions', JSON.stringify([]));
-    window.location.reload();
-  };
+  const user = session?.user;
 
   const stats = {
     totalTransactions: transactions.length,
@@ -82,38 +68,56 @@ function Settings() {
           </div>
         </div>
 
-        {/* Data Management */}
+        {/* Account Information */}
         <div className="bg-card rounded-xl border border-border/50 p-6 shadow-card">
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-2.5 rounded-lg bg-muted text-muted-foreground">
-              <SettingsIcon className="h-5 w-5" />
+            <div className="p-2.5 rounded-lg bg-primary/10 text-primary">
+              <User className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="font-semibold text-foreground">Data Management</h2>
-              <p className="text-sm text-muted-foreground">Manage your app data</p>
+              <h2 className="font-semibold text-foreground">Account Information</h2>
+              <p className="text-sm text-muted-foreground">Manage your profile details</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4 p-4 rounded-lg bg-muted/50 mb-6">
+            <Avatar className="h-16 w-16 border-2 border-primary/20">
+              <AvatarImage src={user?.image || ''} alt={user?.name} />
+              <AvatarFallback className="text-lg bg-primary/10 text-primary">
+                {user?.name?.charAt(0) || 'U'}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <p className="text-lg font-bold text-foreground">{user?.name || 'User'}</p>
+              <p className="text-sm text-muted-foreground">{user?.email}</p>
             </div>
           </div>
 
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 rounded-lg border border-border">
-              <div>
-                <p className="font-medium text-foreground">Clear All Transactions</p>
-                <p className="text-sm text-muted-foreground">Delete all transactions but keep categories and budgets</p>
+            <div className="flex items-center justify-between p-4 rounded-lg border border-border group hover:border-primary/50 transition-colors">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-muted">
+                  <Key className="h-4 w-4 text-muted-foreground" />
+                </div>
+                <div>
+                  <p className="font-medium text-foreground">Password Security</p>
+                  <p className="text-xs text-muted-foreground">Reset your account password via email</p>
+                </div>
               </div>
-              <Button variant="outline" onClick={() => setClearConfirm(true)} className="gap-2">
-                <Trash2 className="h-4 w-4" />
-                Clear
-              </Button>
-            </div>
-
-            <div className="flex items-center justify-between p-4 rounded-lg border border-destructive/30 bg-destructive/5">
-              <div>
-                <p className="font-medium text-foreground">Reset Everything</p>
-                <p className="text-sm text-muted-foreground">Restore app to default state with sample data</p>
-              </div>
-              <Button variant="destructive" onClick={() => setResetConfirm(true)} className="gap-2">
-                <RotateCcw className="h-4 w-4" />
-                Reset
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={async () => {
+                  if (user?.email) {
+                    await (authClient as any).forgetPassword({
+                      email: user.email,
+                      redirectTo: "/reset-password"
+                    });
+                    alert("Instructions to reset your password have been sent to your email.");
+                  }
+                }}
+              >
+                Reset Password
               </Button>
             </div>
           </div>
@@ -126,43 +130,31 @@ function Settings() {
             SpendSmart helps you track expenses, understand where your money goes, and make better spending decisions. 
             Built for students and young adults who want a simple, practical way to manage their finances.
           </p>
-          <p className="text-xs text-muted-foreground">
-            All data is stored locally in your browser. Nothing is sent to any server.
+          <p className="text-xs text-muted-foreground mb-4">
+            Your data is synced securely to the cloud.
           </p>
+          <div className="flex items-center justify-between p-4 rounded-lg border border-border">
+            <div>
+              <Label className="font-medium text-foreground">Log Out</Label>
+              <p className="text-sm text-muted-foreground">
+                Sign out of your account
+              </p>
+            </div>
+            <Button 
+              variant="destructive" 
+              onClick={async () => {
+                  await authClient.signOut();
+                  resetData();
+                  router.navigate({ to: '/' });
+              }}
+            >
+              Log Out
+            </Button>
+          </div>
         </div>
       </div>
-
-      {/* Clear Transactions Confirm */}
-      <Dialog open={clearConfirm} onOpenChange={setClearConfirm}>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Clear All Transactions?</DialogTitle>
-            <DialogDescription>
-              This will delete all {stats.totalTransactions} transactions. Categories and budgets will be kept.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setClearConfirm(false)}>Cancel</Button>
-            <Button variant="destructive" onClick={handleClearTransactions}>Clear Transactions</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Reset Confirm */}
-      <Dialog open={resetConfirm} onOpenChange={setResetConfirm}>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Reset Everything?</DialogTitle>
-            <DialogDescription>
-              This will delete all your data and restore the app to its default state with sample data. This cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setResetConfirm(false)}>Cancel</Button>
-            <Button variant="destructive" onClick={handleReset}>Reset App</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </AppLayout>
   );
 }
+
+    

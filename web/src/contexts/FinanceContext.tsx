@@ -23,50 +23,26 @@ interface FinanceContextType {
   getRemainingBudget: (month?: string) => number;
   getCategoryById: (id: string) => Category | undefined;
   refreshTransactions: () => Promise<void>;
+  resetData: () => void;
 }
 
 const FinanceContext = createContext<FinanceContextType | undefined>(undefined);
 
-const STORAGE_KEYS = {
-  categories: 'spendsmart-categories',
-  budget: 'spendsmart-budget',
-};
-
-function loadFromStorage<T>(key: string, defaultValue: T): T {
-  try {
-    const stored = localStorage.getItem(key);
-    return stored ? JSON.parse(stored) : defaultValue;
-  } catch {
-    return defaultValue;
-  }
-}
-
-function saveToStorage<T>(key: string, value: T): void {
-  try {
-    localStorage.setItem(key, JSON.stringify(value));
-  } catch (error) {
-    console.error('Failed to save to localStorage:', error);
-  }
-}
 
 export function FinanceProvider({ children }: { children: ReactNode }) {
-  const [categories, setCategories] = useState<Category[]>(() =>
-    loadFromStorage(STORAGE_KEYS.categories, DEFAULT_CATEGORIES)
-  );
+  const [categories, setCategories] = useState<Category[]>(DEFAULT_CATEGORIES);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [totalSpent, setTotalSpent] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [budget, setBudget] = useState<Budget>(() =>
-    loadFromStorage(STORAGE_KEYS.budget, DEFAULT_BUDGET)
-  );
+  const [budget, setBudget] = useState<Budget>(DEFAULT_BUDGET);
 
-  // Fetch transactions from API
   const fetchTransactions = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/expenses`);
+      const response = await fetch(`${API_URL}/api/expenses`, {
+        credentials: 'include'
+      });
       if (response.ok) {
         const data = await response.json();
-        // Map DB response to Transaction type
         const txs: Transaction[] = (data.expense || []).map((tx: any) => ({
           id: String(tx.id),
           amount: tx.amount,
@@ -83,10 +59,36 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // Fetch custom categories
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/expenses/categories`, {
+        credentials: 'include'
+      });
+      if (response.ok) {
+        const data = await response.json();
+        // Merge default categories with user categories
+        // Ensure no duplicates if IDs clash (though UUIDs shouldn't)
+        const userCategories: Category[] = (data.categories || []).map((cat: any) => ({
+            id: cat.id,
+            name: cat.name,
+            color: cat.color || undefined,
+            icon: cat.icon || undefined,
+            isDefault: false
+        }));
+        setCategories([...DEFAULT_CATEGORIES, ...userCategories]);
+      }
+    } catch (error) {
+       console.error('Failed to fetch categories:', error);
+    }
+  }
+
   // Fetch total spent from API
   const fetchTotalSpent = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/expenses/total-spent`);
+      const response = await fetch(`${API_URL}/api/expenses/total-spent`, {
+        credentials: 'include'
+      });
       if (response.ok) {
         const data = await response.json();
         setTotalSpent(data.total || 0);
@@ -96,9 +98,33 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Refresh both transactions and total
+  // Fetch budget from API
+  const fetchBudget = async () => {
+    try {
+        const response = await fetch(`${API_URL}/api/expenses/budget`, {
+            credentials: 'include'
+        });
+        if (response.ok) {
+            const data = await response.json();
+            if (data.budget) {
+                setBudget(data.budget);
+            }
+        }
+    } catch (error) {
+        console.error('Failed to fetch budget:', error);
+    }
+  }
+
+  // Refresh all data
   const refreshTransactions = async () => {
-    await Promise.all([fetchTransactions(), fetchTotalSpent()]);
+    await Promise.all([fetchTransactions(), fetchTotalSpent(), fetchCategories(), fetchBudget()]);
+  };
+
+  const resetData = () => {
+    setTransactions([]);
+    setCategories(DEFAULT_CATEGORIES);
+    setBudget(DEFAULT_BUDGET);
+    setTotalSpent(0);
   };
 
   // Load data on mount
@@ -111,21 +137,20 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     loadData();
   }, []);
 
-  useEffect(() => {
-    saveToStorage(STORAGE_KEYS.categories, categories);
-  }, [categories]);
-
-  useEffect(() => {
-    saveToStorage(STORAGE_KEYS.budget, budget);
-  }, [budget]);
-
-  const addCategory = (category: Omit<Category, 'id' | 'isDefault'>) => {
-    const newCategory: Category = {
-      ...category,
-      id: `custom-${Date.now()}`,
-      isDefault: false,
-    };
-    setCategories((prev) => [...prev, newCategory]);
+  const addCategory = async (category: Omit<Category, 'id' | 'isDefault'>) => {
+    try {
+        const response = await fetch(`${API_URL}/api/expenses/categories`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(category)
+        });
+        if (response.ok) {
+            await fetchCategories();
+        }
+    } catch (error) {
+        console.error("Failed to add category", error);
+    }
   };
 
   const updateCategory = (id: string, updates: Partial<Category>) => {
@@ -145,6 +170,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify(transaction),
       });
       
@@ -167,8 +193,20 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     setTransactions((prev) => prev.filter((tx) => tx.id !== id));
   };
 
-  const updateBudget = (newBudget: Budget) => {
-    setBudget(newBudget);
+  const updateBudget = async (newBudget: Budget) => {
+    try {
+        const response = await fetch(`${API_URL}/api/expenses/budget`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(newBudget)
+        });
+        if (response.ok) {
+             setBudget(newBudget);
+        }
+    } catch (error) {
+        console.error("Failed to update budget", error);
+    }
   };
 
   const getMonthlySpending = (month?: string) => {
@@ -220,6 +258,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
         getRemainingBudget,
         getCategoryById,
         refreshTransactions,
+        resetData,
       }}
     >
       {children}
