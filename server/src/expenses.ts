@@ -24,13 +24,9 @@ expensesRoute.get("/", async (c) => {
   const session = await auth.api.getSession({ headers: c.req.raw.headers });
   if (!session) return c.json({ error: "Unauthorized" }, 401);
 
-  console.log(`[GET /expenses] User: ${session.user.id}, Email: ${session.user.email}`);
-
   const transactions = await db.select().from(transactionsTable)
     .where(eq(transactionsTable.userId, session.user.id))
     .orderBy(desc(transactionsTable.date));
-  
-  console.log(`[GET /expenses] Found ${transactions.length} transactions`);
   
   return c.json({ expense: transactions });
 });
@@ -80,6 +76,26 @@ expensesRoute.get("/:id{[0-9]+}", async (c) => {
   } else {
     return c.json({ expense: transaction });
   }
+});
+
+expensesRoute.delete("/:id{[0-9]+}", async (c) => {
+  const session = await auth.api.getSession({ headers: c.req.raw.headers });
+  if (!session) return c.json({ error: "Unauthorized" }, 401);
+
+  const id = Number.parseInt(c.req.param("id"));
+  
+  const [deleted] = await db.delete(transactionsTable).where(
+    and(
+        eq(transactionsTable.id, id),
+        eq(transactionsTable.userId, session.user.id)
+    )
+  ).returning();
+  
+  if (!deleted) {
+    return c.json({ error: "Transaction not found" }, 404);
+  }
+  
+  return c.json({ success: true, deleted });
 });
 
 import { categoriesTable } from "./db/schema";

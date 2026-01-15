@@ -14,7 +14,7 @@ interface FinanceContextType {
   deleteCategory: (id: string) => void;
   addTransaction: (transaction: Omit<Transaction, 'id'>) => Promise<void>;
   updateTransaction: (id: string, updates: Partial<Transaction>) => void;
-  deleteTransaction: (id: string) => void;
+  deleteTransaction: (id: string) => Promise<void>;
   updateBudget: (budget: Budget) => void;
   getMonthlySpending: (month?: string) => number;
   getCategorySpending: (categoryId: string, month?: string) => number;
@@ -167,8 +167,24 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     );
   };
 
-  const deleteTransaction = (id: string) => {
-    setTransactions((prev) => prev.filter((tx) => tx.id !== id));
+  const deleteTransaction = async (id: string) => {
+    try {
+      // Optimistic update
+      setTransactions((prev) => prev.filter((tx) => tx.id !== id));
+      
+      const { error } = await apiFetch(`/api/expenses/${id}`, {
+        method: 'DELETE'
+      });
+      
+      if (error) {
+        // Revert if failed
+        await refreshTransactions();
+        console.error('Failed to delete transaction:', error);
+      }
+    } catch (error) {
+       console.error('Failed to delete transaction:', error);
+       await refreshTransactions();
+    }
   };
 
   const updateBudget = async (newBudget: Budget) => {

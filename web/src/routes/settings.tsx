@@ -9,8 +9,20 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { authClient } from "@/lib/auth-client";
+import { apiFetch } from "@/lib/api";
 
 export const Route = createFileRoute('/settings')({
   component: Settings,
@@ -69,7 +81,7 @@ function Settings() {
         </div>
 
         {/* Account Information */}
-        <div className="bg-card rounded-xl border border-border/50 p-6 shadow-card">
+      <div className="bg-card rounded-xl border border-border/50 p-6 shadow-card">
           <div className="flex items-center gap-3 mb-6">
             <div className="p-2.5 rounded-lg bg-primary/10 text-primary">
               <User className="h-5 w-5" />
@@ -120,6 +132,59 @@ function Settings() {
                 Reset Password
               </Button>
             </div>
+          </div>
+        </div>
+
+        {/* Danger Zone */}
+        <div className="bg-card rounded-xl border border-destructive/20 p-6 shadow-card">
+          <h2 className="font-semibold text-destructive mb-2">Danger Zone</h2>
+          <p className="text-sm text-muted-foreground mb-4">
+            Irreversible actions for your account.
+          </p>
+          
+          <div className="flex items-center justify-between p-4 rounded-lg border border-destructive/20 bg-destructive/5">
+            <div>
+              <Label className="font-medium text-foreground">Delete Account</Label>
+              <p className="text-xs text-muted-foreground">
+                Permanently delete your account and all data
+              </p>
+            </div>
+            
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" size="sm">
+                  Delete Account
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete your
+                    account and remove your data from our servers.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    onClick={async () => {
+                      try {
+                        await apiFetch("/api/account", { method: "DELETE" });
+                        await authClient.signOut();
+                        resetData();
+                        router.navigate({ to: '/' });
+                      } catch (error) {
+                        console.error("Failed to delete account", error);
+                        alert("Failed to delete account. Please try again.");
+                      }
+                    }}
+                  >
+                    Delete Account
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
 

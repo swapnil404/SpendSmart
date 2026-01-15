@@ -27,7 +27,6 @@ export function LoginForm({
     e.preventDefault()
     setLoading(true)
     try {
-      console.log("Attempting login...")
       // Set a fallback timeout in case Better Auth doesn't resolve/reject
       setTimeout(() => {
         setLoading(currentLoading => {
@@ -44,7 +43,6 @@ export function LoginForm({
         password,
       }, {
         onSuccess: async () => {
-          console.log("Login success: Navigating to dashboard...")
           toast.success("Logged in successfully")
           // Small delay to ensure cookies are processed by the browser
           setTimeout(() => {

@@ -43,8 +43,6 @@ app.get("/", (c) => {
   return c.text(welcomeStrings.join("\n\n"));
 });
 
-app.get("/test", (c) => c.text("Hono!"));
-
 app.post("/api/check-email", async (c) => {
   try {
     const { email } = await c.req.json();
@@ -63,14 +61,41 @@ app.post("/api/check-email", async (c) => {
   }
 });
 
+app.delete("/api/account", async (c) => {
+  const { auth } = await import("./auth");
+  const session = await auth.api.getSession({ headers: c.req.raw.headers });
+  if (!session) return c.json({ error: "Unauthorized" }, 401);
+
+  const userId = session.user.id;
+  const { db } = await import("./db/db");
+  const { transactionsTable, categoriesTable, budgetsTable, session: sessionTable, account: accountTable, user: userTable } = await import("./db/schema");
+  const { eq } = await import("drizzle-orm");
+
+  try {
+    // 1. Delete application data
+    await db.delete(transactionsTable).where(eq(transactionsTable.userId, userId));
+    await db.delete(categoriesTable).where(eq(categoriesTable.userId, userId));
+    await db.delete(budgetsTable).where(eq(budgetsTable.userId, userId));
+
+    // 2. Delete auth data (sessions, accounts)
+    await db.delete(sessionTable).where(eq(sessionTable.userId, userId));
+    await db.delete(accountTable).where(eq(accountTable.userId, userId));
+    
+    // 3. Delete user
+    await db.delete(userTable).where(eq(userTable.id, userId));
+
+    return c.json({ success: true });
+  } catch (error) {
+    console.error("Failed to delete account:", error);
+    return c.json({ error: "Failed to delete account" }, 500);
+  }
+});
+
 app.all("/api/auth/*", (c) => {
-  console.log(`Auth request: ${c.req.method} ${c.req.url}`);
   return auth.handler(c.req.raw);
 });
 
 app.route("/api/expenses", expensesRoute);
-
-console.log("server running");
 
 if (!process.env.VERCEL) {
   Bun.serve({

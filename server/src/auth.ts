@@ -7,7 +7,6 @@ import { emailOTP } from "better-auth/plugins";
 import nodemailer from "nodemailer";
 
 const baseURL = (process.env.BETTER_AUTH_URL || process.env.VITE_API_URL || "http://localhost:3001").replace(/\/$/, "") + '/api/auth';
-console.log(`Auth Base URL: ${baseURL}`);
 
 const trustedOrigins = [
   "http://localhost:5173",
@@ -15,7 +14,6 @@ const trustedOrigins = [
   "https://spendsmart.swapnilchristian.dev",
   process.env.VITE_API_URL as string
 ];
-console.log(`Auth Trusted Origins: ${trustedOrigins.join(', ')}`);
 
 const isProduction = process.env.NODE_ENV === "production" || process.env.VERCEL === "1";
 
@@ -36,7 +34,6 @@ export const auth = betterAuth({
   plugins: [
     emailOTP({
         async sendVerificationOTP({ email, otp, type }) {
-            console.log(`OTP for ${email}: ${otp}`);
             try {
               await transporter.sendMail({
                 from: '"SpendSmart" <spendsmart.noreply@gmail.com>',
@@ -52,7 +49,6 @@ export const auth = betterAuth({
                   </div>
                 `,
               });
-              console.log(`Email sent to ${email}`);
             } catch (error) {
               console.error("Error sending OTP email:", error);
             }
@@ -63,7 +59,6 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: true,
     async sendResetPassword({ user, url, token }) {
-      console.log(`Reset Password URL for ${user.email}: ${url}`);
       try {
         await transporter.sendMail({
           from: '"SpendSmart" <spendsmart.noreply@gmail.com>',
@@ -81,7 +76,6 @@ export const auth = betterAuth({
             </div>
           `,
         });
-        console.log(`Reset password email sent to ${user.email}`);
       } catch (error) {
         console.error("Error sending reset password email:", error);
       }

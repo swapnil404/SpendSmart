@@ -54,7 +54,193 @@
   --color-category-education: hsl(var(--category-education));
   --color-category-other: hsl(var(--category-other));
 
-  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+}
+
+:root {
+  --radius: 0.5rem;
+
+  /* Backgrounds: Deep Blue/Black */
+  --background: 222 47% 7%;       /* #0B0F19 */
+  --foreground: 210 40% 98%;      /* #F3F4F6 */
+
+  --card: 220 39% 11%;            /* #111827 */
+  --card-foreground: 210 40% 98%;
+
+  --popover: 220 39% 11%;
+  --popover-foreground: 210 40% 98%;
+
+  /* Primary: Electric Indigo */
+  --primary: 243 75% 59%;         /* #4F46E5 */
+  --primary-foreground: 0 0% 100%;
+
+  /* Secondary: Surface variant */
+  --secondary: 217 33% 17%;       /* #1F2937 */
+  --secondary-foreground: 210 40% 98%;
+
+  /* Muted: Subtle items */
+  --muted: 217 33% 17%;
+  --muted-foreground: 215 20% 65%; /* #9CA3AF */
+
+  /* Accent: Neon Cyan */
+  --accent: 186 80% 53%;          /* #22D3EE */
+  --accent-foreground: 222 47% 7%; /* Dark text on neon */
+
+  /* Destructive: Red */
+  --destructive: 348 83% 60%;     /* #EF4444 */
+  --destructive-foreground: 0 0% 100%;
+
+  /* Borders: Dark Navy */
+  --border: 217 33% 17%;          /* #273449 based equivalent */
+  --input: 217 33% 17%;
+  --ring: 243 75% 59%;
+
+  /* Sidebar */
+  --sidebar: 222 47% 7%;
+  --sidebar-foreground: 215 20% 65%;
+  --sidebar-primary: 243 75% 59%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 217 33% 17%;
+  --sidebar-accent-foreground: 210 40% 98%;
+  --sidebar-border: 217 33% 17%;
+  --sidebar-ring: 243 75% 59%;
+
+  /* Custom Status Colors */
+  --success: 142 71% 45%;         /* #22C55E */
+  --success-foreground: 0 0% 100%;
+  --warning: 38 92% 50%;          /* #F59E0B */
+  --warning-foreground: 0 0% 100%;
+  --info: 217 91% 60%;            /* #3B82F6 */
+  --info-foreground: 0 0% 100%;
+
+  /* Category colors - Adjusted for dark mode contrast */
+  --category-food: 15 85% 60%;
+  --category-transport: 210 85% 60%;
+  --category-shopping: 280 70% 60%;
+  --category-bills: 45 90% 55%;
+  --category-subscriptions: 330 80% 60%;
+  --category-entertainment: 170 75% 50%;
+  --category-health: 0 80% 65%;
+  --category-education: 240 70% 65%;
+  --category-other: 220 20% 60%;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+  --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.2), 0 2px 4px -2px rgb(0 0 0 / 0.2);
+}
+
+.dark {
+  /* Using same values as root since we are dark-default now */
+  /* But defining strictly for shadcn if it forces .dark class */
+  --background: 222 47% 7%;
+  --foreground: 210 40% 98%;
+  --card: 220 39% 11%;
+  --card-foreground: 210 40% 98%;
+  --popover: 220 39% 11%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 243 75% 59%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 217 33% 17%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217 33% 17%;
+  --muted-foreground: 215 20% 65%;
+  --accent: 186 80% 53%;
+  --accent-foreground: 222 47% 7%;
+  --destructive: 348 83% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 217 33% 17%;
+  --input: 217 33% 17%;
+  --ring: 243 75% 59%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased selection:bg-accent/20 selection:text-accent;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight text-white;
+  }
+  
+  /* Amounts and Numbers */
+  .font-numeric {
+    @apply font-display tracking-wide;
+  }
+}
+
+@layer components {
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 hover:border-primary/20;
+  }
+
+  .stat-card {
+    @apply bg-card rounded-xl p-5 border border-border transition-all duration-300 hover:bg-card/80;
+  }
+
+  .category-badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border border-transparent transition-colors hover:bg-opacity-80;
+  }
+
+  .budget-progress {
+    @apply h-2.5 rounded-full bg-secondary overflow-hidden;
+  }
+
+  .budget-progress-bar {
+    @apply h-full rounded-full transition-all duration-700 ease-out shadow-[0_0_10px_rgba(var(--primary),0.5)];
+  }
+  
+  /* Modern Input Styles */
+  .input-neo {
+    @apply bg-secondary/50 border-border focus:border-accent focus:ring-1 focus:ring-accent/50 transition-all duration-200;
+  }
+  
+  /* Modern Button Styles */
+  .btn-neo {
+    @apply font-medium tracking-wide shadow-md transition-all duration-200 active:scale-95;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-glow {
+    text-shadow: 0 0 20px rgba(var(--primary), 0.5);
+  }
+  
+  .border-glow {
+    box-shadow: 0 0 15px -3px rgba(var(--primary), 0.3);
+  }
+
+  /* Animations */
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  
+  .animate-scale-in {
+    animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
 }
 
 :root {
