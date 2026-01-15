@@ -13,6 +13,7 @@ import { Link, createFileRoute } from '@tanstack/react-router';
 import { useQuery } from "@tanstack/react-query";
 
 import { authClient } from "@/lib/auth-client";
+import { apiFetch } from "@/lib/api";
 import { redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute('/dashboard')({
@@ -31,7 +32,7 @@ export const Route = createFileRoute('/dashboard')({
 })
 
 async function fetchTotal() {
-  const { data, error } = await authClient.$fetch("/api/expenses/total-spent");
+  const { data, error } = await apiFetch("/api/expenses/total-spent");
   if (error) return null;
   return data as { total: number };
 }

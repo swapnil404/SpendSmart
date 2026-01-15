@@ -1,9 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Category, Transaction, Budget } from '@/lib/types';
 import { DEFAULT_CATEGORIES, DEFAULT_BUDGET, getCurrentMonth } from '@/lib/data';
-import { authClient } from '@/lib/auth-client';
-
-const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, "");
+import { apiFetch } from '@/lib/api';
 
 interface FinanceContextType {
   categories: Category[];
@@ -39,7 +37,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
 
   const fetchTransactions = async () => {
     try {
-      const { data, error } = await authClient.$fetch("/api/expenses");
+      const { data, error } = await apiFetch("/api/expenses");
       if (data) {
         const txs: Transaction[] = ((data as any).expense || []).map((tx: any) => ({
           id: String(tx.id),
@@ -60,7 +58,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   // Fetch custom categories
   const fetchCategories = async () => {
     try {
-      const { data, error } = await authClient.$fetch("/api/expenses/categories");
+      const { data, error } = await apiFetch("/api/expenses/categories");
       if (data) {
         // Merge default categories with user categories
         const userCategories: Category[] = ((data as any).categories || []).map((cat: any) => ({
@@ -80,7 +78,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   // Fetch total spent from API
   const fetchTotalSpent = async () => {
     try {
-      const { data, error } = await authClient.$fetch("/api/expenses/total-spent");
+      const { data, error } = await apiFetch("/api/expenses/total-spent");
       if (data) {
         setTotalSpent((data as any).total || 0);
       }
@@ -92,7 +90,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   // Fetch budget from API
   const fetchBudget = async () => {
     try {
-        const { data, error } = await authClient.$fetch("/api/expenses/budget");
+        const { data, error } = await apiFetch("/api/expenses/budget");
         if (data && (data as any).budget) {
             setBudget((data as any).budget);
         }
@@ -125,9 +123,9 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
 
   const addCategory = async (category: Omit<Category, 'id' | 'isDefault'>) => {
     try {
-        const { data, error } = await authClient.$fetch("/api/expenses/categories", {
+        const { data, error } = await apiFetch("/api/expenses/categories", {
             method: 'POST',
-            body: JSON.stringify(category)
+            body: category
         });
         if (data) {
             await fetchCategories();
@@ -149,9 +147,9 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
 
   const addTransaction = async (transaction: Omit<Transaction, 'id'>) => {
     try {
-      const { data, error } = await authClient.$fetch("/api/expenses", {
+      const { data, error } = await apiFetch("/api/expenses", {
         method: 'POST',
-        body: JSON.stringify(transaction),
+        body: transaction,
       });
       
       if (data) {
@@ -175,9 +173,9 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
 
   const updateBudget = async (newBudget: Budget) => {
     try {
-        const { data, error } = await authClient.$fetch("/api/expenses/budget", {
+        const { data, error } = await apiFetch("/api/expenses/budget", {
             method: 'POST',
-            body: JSON.stringify(newBudget)
+            body: newBudget
         });
         if (data) {
              setBudget(newBudget);

@@ -11,17 +11,15 @@ import {
 } from "@/components/ui/card";
 
 import { useQuery } from "@tanstack/react-query";
+import { apiFetch } from "@/lib/api";
 
 async function fetchTotal() {
-  const apiUrl = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
-
-  const res = await fetch(`${apiUrl}/api/expenses/total-spent`);
-  if (!res.ok) {
-    console.error("Failed to fetch total spent:", res.status);
-    return;
+  const { data, error } = await apiFetch("/api/expenses/total-spent");
+  if (error) {
+    console.error("Failed to fetch total spent:", error);
+    return null;
   }
-  const data = await res.json();
-  return data;
+  return data as { total: number };
 }
 
 export function SectionCards() {
@@ -39,7 +37,7 @@ export function SectionCards() {
         <CardHeader>
           <CardDescription>Total Spend (This Month)</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            {isPending ? "..." : data.total}
+            {isPending ? "..." : (data?.total ?? 0)}
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
