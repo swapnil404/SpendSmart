@@ -53,8 +53,6 @@ export const auth = betterAuth({
               console.error("Error sending OTP email:", error);
             }
         },
-        sendOnSignUp: true,
-        autoSignInAfterVerification: true,
     })
   ],
   emailAndPassword: {

@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TransactionsRouteImport } from './routes/transactions'
 import { Route as SubscriptionsRouteImport } from './routes/subscriptions'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as Reset_password_pageRouteImport } from './routes/reset_password_page'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as RegisterRouteImport } from './routes/register'
@@ -39,6 +40,11 @@ const SubscriptionsRoute = SubscriptionsRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Reset_password_pageRoute = Reset_password_pageRouteImport.update({
+  id: '/reset_password_page',
+  path: '/reset_password_page',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -121,6 +127,7 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/reports': typeof ReportsRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/reset_password_page': typeof Reset_password_pageRoute
   '/settings': typeof SettingsRoute
   '/subscriptions': typeof SubscriptionsRoute
   '/transactions': typeof TransactionsRoute
@@ -139,6 +146,7 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/reports': typeof ReportsRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/reset_password_page': typeof Reset_password_pageRoute
   '/settings': typeof SettingsRoute
   '/subscriptions': typeof SubscriptionsRoute
   '/transactions': typeof TransactionsRoute
@@ -158,6 +166,7 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/reports': typeof ReportsRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/reset_password_page': typeof Reset_password_pageRoute
   '/settings': typeof SettingsRoute
   '/subscriptions': typeof SubscriptionsRoute
   '/transactions': typeof TransactionsRoute
@@ -178,6 +187,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/reports'
     | '/reset-password'
+    | '/reset_password_page'
     | '/settings'
     | '/subscriptions'
     | '/transactions'
@@ -196,6 +206,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/reports'
     | '/reset-password'
+    | '/reset_password_page'
     | '/settings'
     | '/subscriptions'
     | '/transactions'
@@ -214,6 +225,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/reports'
     | '/reset-password'
+    | '/reset_password_page'
     | '/settings'
     | '/subscriptions'
     | '/transactions'
@@ -233,6 +245,7 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRoute
   ReportsRoute: typeof ReportsRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  Reset_password_pageRoute: typeof Reset_password_pageRoute
   SettingsRoute: typeof SettingsRoute
   SubscriptionsRoute: typeof SubscriptionsRoute
   TransactionsRoute: typeof TransactionsRoute
@@ -259,6 +272,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset_password_page': {
+      id: '/reset_password_page'
+      path: '/reset_password_page'
+      fullPath: '/reset_password_page'
+      preLoaderRoute: typeof Reset_password_pageRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -369,6 +389,7 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   ReportsRoute: ReportsRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  Reset_password_pageRoute: Reset_password_pageRoute,
   SettingsRoute: SettingsRoute,
   SubscriptionsRoute: SubscriptionsRoute,
   TransactionsRoute: TransactionsRoute,
