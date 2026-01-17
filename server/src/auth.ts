@@ -61,20 +61,22 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: true,
     async sendResetPassword({ user, url, token }) {
+      const appUrl = isProduction ? "https://spendsmart.swapnilchristian.dev" : "http://localhost:5173";
+      const resetLink = `${appUrl}/reset_password_page?token=${token}`;
       try {
         await transporter.sendMail({
           from: '"SpendSmart" <spendsmart.noreply@gmail.com>',
           to: user.email,
           subject: "Reset your SpendSmart password",
-          text: `Click the link to reset your password: ${url}`,
+          text: `Click the link to reset your password: ${resetLink}`,
           html: `
             <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
               <h2>Reset Your Password</h2>
               <p>You requested a password reset for your SpendSmart account.</p>
               <p>Click the button below to reset your password:</p>
-              <a href="${url}" style="display: inline-block; background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; margin: 16px 0;">Reset Password</a>
+              <a href="${resetLink}" style="display: inline-block; background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; margin: 16px 0;">Reset Password</a>
               <p style="color: #666; font-size: 14px;">If you didn't ask to reset your password, you can ignore this email.</p>
-              <p style="color: #666; font-size: 12px; margin-top: 24px;">Link: ${url}</p>
+              <p style="color: #666; font-size: 12px; margin-top: 24px;">Link: ${resetLink}</p>
             </div>
           `,
         });
